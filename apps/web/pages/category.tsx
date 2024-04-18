@@ -34,10 +34,9 @@ export default function CategoryPage() {
   ];
   const { data: productsCatalog } = useProducts();
 
-  // console.log('vag')
-
 
   if (!productsCatalog) {
+    console.log("vag mpainei edw mesa")
     return null;
   }
 
@@ -47,6 +46,8 @@ export default function CategoryPage() {
     count: productCount || 0,
     href: '/category',
   }));
+
+
 
   return (
     <DefaultLayout breadcrumbs={breadcrumbs}>

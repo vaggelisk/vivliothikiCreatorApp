@@ -9,8 +9,6 @@ export async function prefetchProducts(context: GetServerSideEnhancedContext): P
   const sdk = getSdk();
   const products = await sdk.magento.products({});
 
-
-  console.log('vag', products.data)
   queryClient.setQueryData(['products'], products);
 
   return products.data;
@@ -28,7 +26,7 @@ export function useProducts() {
     pagination: {
       currentPage: 1,
       pageSize: 24,
-      totalResults: 398,
+      totalResults: undefined,
       totalPages: 17,
     },
     facets: [
@@ -74,6 +72,8 @@ export function useProducts() {
   console.log('vag 2', vaggelis.data)
 
   mockUpProducts.products = vaggelis.data.data.products
+  mockUpProducts.pagination = vaggelis.data.data.products.page_info
+  mockUpProducts.pagination.totalResults = vaggelis.data.data.products.total_count
   return { data: mockUpProducts }   // edw eixa gamithei 10 wres, epeidh den evaza afto to data
 }
 // ftou xeleftheria mono avto tha pw
