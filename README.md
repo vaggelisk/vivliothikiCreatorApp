@@ -56,6 +56,20 @@ The sdk connector part is
 	package.json
 ```
 
+### getSdk
+
+> const sdk = getSdk();     // magentiko
+> 
+> // const sdk = useSdk    // default
+
+| sdkConnectors  | application |
+|----------------|-------------|
+| getSdk         | magento     |
+| useSdk         | default     |
+-------
+
+
+
 ## Features:
 
 - [Turborepo](https://turbo.build/) remote cache build system, with blazingly fast execution of commands (build, lint, test etc.) on your local machine.
