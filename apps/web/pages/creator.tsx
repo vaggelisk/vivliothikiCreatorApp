@@ -6,12 +6,13 @@ import {
 } from '~/components';
 import { DefaultLayout } from '~/layouts';
 import {createGetServerSideProps} from "~/helpers";
+import CartPage from "~/pages/cart";
 
 export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['cart', 'product'] }, (context) => {
   context.res.setHeader('Cache-Control', 'no-cache');
 });
 
-export default function CreatorPage() {
+export function CreatorPage() {
   const { t } = useTranslation('category');
   const breadcrumbs: Breadcrumb[] = [
     { name: t('common:home'), link: '/' },
@@ -20,7 +21,9 @@ export default function CreatorPage() {
 
   return (
     <DefaultLayout breadcrumbs={breadcrumbs}>
-      <CreatorPageContent/>
+      <CreatorPageContent />
     </DefaultLayout>
   );
 }
+
+export default CreatorPage;
