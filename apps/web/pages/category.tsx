@@ -15,7 +15,7 @@ export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['c
   context.res.setHeader('Cache-Control', 'no-cache');
   const products = await prefetchProducts(context);
 
-  console.log('vag', products[0])
+  console.log('vag', products)
 
   if (!products) {
     return {
@@ -34,9 +34,8 @@ export default function CategoryPage() {
   ];
   const { data: productsCatalog } = useProducts();
 
-  console.log('vag')
+  // console.log('vag')
 
-  console.log(productsCatalog)
 
   if (!productsCatalog) {
     return null;

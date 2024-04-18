@@ -10,11 +10,10 @@ export async function prefetchProducts(context: GetServerSideEnhancedContext): P
   const products = await sdk.magento.products({});
 
 
-  console.log(products.data.products.total_count)
-  // console.log(products.products.length)
+  console.log('vag', products.data)
   queryClient.setQueryData(['products'], products);
 
-  return products.data.products.items;
+  return products.data;
 }
 
 
@@ -66,17 +65,15 @@ export function useProducts() {
       },
     ],
     products: undefined
-
   }
 
   const vaggelis = useQuery(['products'], () => sdk.magento.products({}), {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
-  console.log('vag 2', vaggelis.data.data.products.items[0].price_range.minimum_price.final_price)
+  console.log('vag 2', vaggelis.data)
 
-  mockUpProducts.products = vaggelis.data.data.products.items
-
+  mockUpProducts.products = vaggelis.data.data.products
   return { data: mockUpProducts }   // edw eixa gamithei 10 wres, epeidh den evaza afto to data
 }
-// φτοθ κσελεφτερια μονο αφτο τηα πς
+// ftou xeleftheria mono avto tha pw
