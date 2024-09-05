@@ -8,6 +8,7 @@ export * from './CategoryTree';
 export * from './CheckoutAddress';
 export * from './CheckoutPayment';
 export * from './CreatorPageContent';
+export * from './Creator2PageContent';
 export * from './ContactInformation';
 export * from './Footer';
 export * from './Gallery';
