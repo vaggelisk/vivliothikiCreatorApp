@@ -11,7 +11,7 @@ const sdk = {
 
 describe('prefetchProducts', () => {
   it('should return queryClient', async () => {
-    const response = await prefetchProducts(createGetServerSidePropsContext({ sdk }));
+    const response = await prefetchProducts(createGetServerSidePropsContext({sdk}));
 
     expect(response).toEqual(mockProducts);
   });
