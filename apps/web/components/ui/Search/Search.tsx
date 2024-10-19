@@ -1,26 +1,45 @@
 import { type ChangeEvent, type FormEvent, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { offset } from '@floating-ui/react-dom';
-import { SfInput, SfIconSearch, SfIconCancel, useDisclosure, useTrapFocus, useDropdown } from '@storefront-ui/react';
+import {
+  SfInput,
+  SfIconSearch,
+  SfIconCancel,
+  useDisclosure,
+  useTrapFocus,
+  useDropdown,
+  SfLoaderCircular, SfButton
+} from '@storefront-ui/react';
 import classNames from 'classnames';
 import type { SearchProps } from '~/components';
 
-export function Search({ className }: SearchProps) {
+export function Search({ className, outerComp, bookDetails, isbnOfBook }: SearchProps) {
   const inputReference = useRef<HTMLInputElement>(null);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState( className ? className.tit : '');
+  const [modalName, setModalName] = useState( className ? className.modalOf : '');
+  const [currentScreen] = useState(className ? className.curScreen : '');
+  // const [outerComp, setOuterComp] = useState(className.outerComp);
   const router = useRouter();
-  const { isOpen, close, open } = useDisclosure();
+  const { isOpen, close, open } = useDisclosure({ initialValue: true });
   const { refs } = useDropdown({ isOpen, onClose: close, placement: 'bottom-start', middleware: [offset(4)] });
   useTrapFocus(refs.floating, { arrowKeysOn: true, activeState: isOpen, initialFocus: false });
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     close();
-    await router.push(`/search?search=${searchValue}`);
+    if (currentScreen==="/search") {
+      // noinspection TypeScriptValidateTypes
+      await router.push({
+        pathname: '/search-on-editors',
+        query: { search: searchValue, isbn: isbnOfBook, data: bookDetails}
+      })
+    } else {
+      await router.push(`/search?search=${searchValue}`);
+    }
   };
   const handleReset = () => {
     setSearchValue('');
-    close();
+    // if (modalName!=='creator') close();
     inputReference.current?.focus();
   };
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -33,12 +52,13 @@ export function Search({ className }: SearchProps) {
   };
 
   return (
-    <form role="search" onSubmit={handleSubmit} ref={refs.setReference} className={classNames('relative', className)}>
+    <form  onSubmit={handleSubmit}
+          ref={refs.setReference}
+           className={classNames('relative', className)}>
       <SfInput
         ref={inputReference}
         value={searchValue}
         onChange={handleChange}
-        onFocus={open}
         aria-label="Search"
         placeholder="Search"
         slotPrefix={<SfIconSearch />}
@@ -55,6 +75,13 @@ export function Search({ className }: SearchProps) {
           )
         }
       />
+      {outerComp!=='menu' && (
+        <div>
+          <SfButton type="submit" className="w-full md:w-1/6 mt-3 flex" >
+            Αναζήτηση
+          </SfButton>
+        </div>
+      )}
     </form>
   );
 }

@@ -22,6 +22,7 @@ type LayoutPropsType = PropsWithChildren & {
 export function DefaultLayout({ children, breadcrumbs = [] }: LayoutPropsType): JSX.Element {
   const { t } = useTranslation();
   const { data: cart } = useCart();
+  const outerCompon = "menu";
   const cartLineItemsCount = cart?.lineItems.reduce((total, { quantity }) => total + quantity, 0) ?? 0;
 
   return (
@@ -36,7 +37,7 @@ export function DefaultLayout({ children, breadcrumbs = [] }: LayoutPropsType): 
         >
           <span>{t('allProductsLinkText')}</span>
         </SfButton>
-        <Search className="hidden md:block flex-1" />
+        <Search outerComp={outerCompon} className="hidden md:block flex-1" />
         <nav className="hidden md:flex md:flex-row md:flex-nowrap">
           <SfButton
             className="mr-2 -ml-0.5 text-white bg-primary-700 hover:bg-primary-800 hover:text-white active:bg-primary-900 active:text-white"

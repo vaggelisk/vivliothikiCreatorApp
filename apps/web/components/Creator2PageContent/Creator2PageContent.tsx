@@ -6,7 +6,6 @@ import Box from "@material-ui/core/Box";
 import { IconButton } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PhotoCameraRoundedIcon from "@material-ui/icons/PhotoCameraRounded";
-import Link from "next/link";
 import {SfButton, SfIconClose, SfModal, useDisclosure} from "@storefront-ui/react";
 
 
@@ -42,13 +41,12 @@ export function Creator2PageContent() {
         try {
             const response = await axios({
                 method: "post",
-                url: "https://yourdomain.gr/rest/V1/custom/documents/upload",
+                url: "http://yourdomain.gr/rest/V1/custom/documents/upload",
                 data: formData,
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            setTitle('Ο Άνθρωπος και το παιχνίδι')
+            response ? setTitle(response.data[2]) : setTitle('')
             open();
-            console.log(response)
         } catch(error) {
             console.log(error)
         }
@@ -74,100 +72,81 @@ export function Creator2PageContent() {
 
 
 
-    // const handleCapture = (target) => {
-    //     if (target.files) {
-    //         if (target.files.length !== 0) {
-    //             const file = target.files[0];
-    //             const newUrl = URL.createObjectURL(file);
-    //             setSource(newUrl);
-    //             console.log(newUrl)
-    //         }
-    //     }
-    // };
-
 
     return (
-      <NarrowContainer>
-          <div className={classes.root}>
-              <Grid container>
-                  <Grid item xs={12}>
-                          <h5>Φωτογράφησε</h5>
-                          <h5>τον τίτλο του βιβλίου</h5>
-                          <h5>που θέλεις να αρχειοθετήσεις</h5>
-                      {source && (
-                          <Box
-                              display="flex"
-                              justifyContent="center"
-                              border={1}
-                              className={classes.imgBox}
-                          >
-                              <img src={source} alt={"snap"} className={classes.img}></img>
-                          </Box>
-                      )}
-                      <form>
-                          <input
-                              accept="image/*"
-                              className={classes.input}
-                              id="icon-button-file"
-                              type="file"
-                              // onChange={handleFileSelect}
-                              onChange={handleFileSelect}
-                          />
-                          <label htmlFor="icon-button-file">
-                              <IconButton
-                                  color="primary"
-                                  aria-label="upload picture"
-                                  component="span"
-                              >
-                                  <PhotoCameraRoundedIcon fontSize="large" color="primary" />
-                              </IconButton>
-                          </label>
-                          <div>
-                              <SfButton onClick={handleSubmit}
-                                        size="lg" className="mb-4 md:mb-0">
-                                  Υποβολή
-                              </SfButton>
-                          </div>
-                      </form>
-                  </Grid>
-              </Grid>
-              {isOpen && (
-                  <SfModal
-                      open={isOpen}
-                      onClose={close}
-                      className="w-[90%] h-[60%] z-50"
-                      as="section"
-                      role="dialog"
-                      aria-labelledby="search-modal-title"
-                  >
-                      <header className="mb-10">
-                          <SfButton square variant="tertiary"
-                                    className="absolute right-4 top-2"
-                                    onClick={close}>
-                              <SfIconClose className="text-neutral-500" />
-                          </SfButton>
-                          <h3 id="search-modal-title"
-                              className="absolute left-6 top-4 font-bold typography-headline-4 mb-4">
-                              <div>Είναι αυτός ο τίτλος;</div>
-                          </h3>
-                          <h3 id="search-modal-title"
-                              className="absolute left-6 top-10 font-bold typography-headline-4 mb-20">
-                              <div>Αν όχι διορθώστε.</div>
-                          </h3>
-                      </header>
-                      <Search className={{tit: title}}
-                              sendDataToParent={handleTitleFromSearch}
-                      />
-                      <div>
-                          <SfButton onClick={console.log('geia sas paidia')}
-                                    size="lg" className="mt-8 mb-4 md:mb-0">
-                              Αναζήτηση στη βιβλιοθήκη μας
-                          </SfButton>
-                      </div>
-                      {title}
-                  </SfModal>
-              )}
-          </div>
-      </NarrowContainer>
-  )
+        <NarrowContainer>
+            <div className={classes.root}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <h5>Φωτογράφησε</h5>
+                        <h5>τον τίτλο του βιβλίου</h5>
+                        <h5>που θέλεις να αρχειοθετήσεις</h5>
+                        {source && (
+                            <Box
+                                display="flex"
+                                justifyContent="center"
+                                border={1}
+                                className={classes.imgBox}
+                            >
+                                <img src={source} alt={"snap"} className={classes.img}></img>
+                            </Box>
+                        )}
+                        <form>
+                            <input
+                                accept="image/*"
+                                className={classes.input}
+                                id="icon-button-file"
+                                type="file"
+                                // onChange={handleFileSelect}
+                                onChange={handleFileSelect}
+                            />
+                            <label htmlFor="icon-button-file">
+                                <IconButton
+                                    color="primary"
+                                    aria-label="upload picture"
+                                    component="span"
+                                >
+                                    <PhotoCameraRoundedIcon fontSize="large" color="primary" />
+                                </IconButton>
+                            </label>
+                            <div>
+                                <SfButton onClick={handleSubmit}
+                                          size="lg" className="mb-4 md:mb-0">
+                                    Υποβολή
+                                </SfButton>
+                            </div>
+                        </form>
+                    </Grid>
+                </Grid>
+                {isOpen && (
+                    <SfModal
+                        open={isOpen}
+                        onClose={close}
+                        className="w-full h-full z-50"
+                        as="section"
+                        role="dialog"
+                        aria-labelledby="search-modal-title"
+                    >
+                        <header className="mb-10">
+                            <SfButton square variant="tertiary"
+                                      className="absolute right-4 top-2"
+                                      onClick={close}>
+                                <SfIconClose className="text-neutral-500" />
+                            </SfButton>
+                            <h3 id="search-modal-title"
+                                className="absolute left-6 top-4 font-bold typography-headline-4 mb-4">
+                                <div>Είναι αυτός ο τίτλος;</div>
+                            </h3>
+                            <h3 id="search-modal-title"
+                                className="absolute left-6 top-10 font-bold typography-headline-4 mb-20">
+                                <div>Αν όχι διορθώστε.</div>
+                            </h3>
+                        </header>
+                        <Search className={{tit: title, modalOf: 'creator2'}}
+                        />
+                    </SfModal>
+                )}
+            </div>
+        </NarrowContainer>
+    )
 }

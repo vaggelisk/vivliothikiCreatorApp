@@ -16,7 +16,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   eslint: {
     ignoreDuringBuilds: true,
     dirs: ['components', 'hooks', 'layouts', 'pages', 'sdk', 'utils'],
@@ -25,7 +25,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'evia.pyconero.gr',
+        hostname: 'api.notia-evia.gr',
         port: '',
         pathname: '/media/catalog/product/**',
       },

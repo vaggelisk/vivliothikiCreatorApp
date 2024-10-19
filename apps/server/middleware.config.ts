@@ -45,6 +45,20 @@ const config = {
           customer_create_account_confirm: true,
         },
       },
+      // extensions: (extensions)=>[
+      //   ...extensions,
+      //   {
+      //     name: "extension-name",
+      //     extendApiMethods: {
+      //       baseSites: async (context) => {
+      //         // Using integration's HTTP client to make a request to SAP Commerce Cloud backend
+      //         // SAPCC integration is using `axios` as an HTTP client, so we want to retreive only the `data` property from the response.
+      //         const { data } = await context.client.get("/basesites");
+      //         return data;
+      //       },
+      //     },
+      //   }
+      // ],
     }
   },
 };

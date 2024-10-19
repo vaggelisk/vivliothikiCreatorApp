@@ -28,6 +28,7 @@ export function CheckoutAddress({ type, heading, description, buttonText }: Chec
       </div>
       {savedAddress ? (
         <div className="mt-2 md:w-[520px]">
+
           <p>{`${savedAddress.firstName} ${savedAddress.lastName}`}</p>
           <p>{savedAddress.phone}</p>
           <p>{`${savedAddress.streetName} ${savedAddress.streetNumber}`}</p>

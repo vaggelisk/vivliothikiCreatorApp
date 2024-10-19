@@ -6,8 +6,11 @@ import { prefetchProducts, useProducts } from '~/hooks';
 import { DefaultLayout } from '~/layouts';
 
 export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['category'] }, async (context) => {
+
   context.res.setHeader('Cache-Control', 'no-cache');
-  const products = await prefetchProducts(context);
+  let search = context.query.search;
+  const products = await prefetchProducts(context, search);
+
 
   if (!products) {
     return {
@@ -20,7 +23,7 @@ export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['c
 
 export default function SearchPage() {
   const { t } = useTranslation('category');
-  const { query } = useRouter();
+  const { query, route } = useRouter();
   const { data: productsCatalog } = useProducts();
 
   if (!productsCatalog) {
@@ -30,11 +33,17 @@ export default function SearchPage() {
   const { products, pagination, facets } = productsCatalog;
   const categoryTitle = t('resultsFor', { phrase: query?.search });
 
+
+
   return (
-    <DefaultLayout>
+    <DefaultLayout >
       <CategoryPageContent
         title={categoryTitle}
-        products={products}
+        comeFromCreator={query?.search}
+        currentScreen={route}
+        book={query?.data}
+        isbn={query?.isbn}
+        products={products.items}
         totalProducts={pagination.totalResults}
         sidebar={
           <>

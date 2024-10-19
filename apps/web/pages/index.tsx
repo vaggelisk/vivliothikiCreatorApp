@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { RenderContent } from '~/components';
+import {CreatorPageContent, RenderContent} from '~/components';
 import { createGetServerSideProps } from '~/helpers';
 import { useContent, prefetchContent, ContentDynamicPage } from '~/hooks';
 import { DefaultLayout } from '~/layouts';
@@ -24,15 +24,7 @@ export default function Home() {
 
   return (
     <DefaultLayout>
-      {content && (
-        <div className="cms-content">
-          {content.map(({ fields }, index) => (
-            <Fragment key={`${fields.component}-${index}`}>
-              <RenderContent content={fields.content} />
-            </Fragment>
-          ))}
-        </div>
-      )}
+      <CreatorPageContent />
     </DefaultLayout>
   );
 }
