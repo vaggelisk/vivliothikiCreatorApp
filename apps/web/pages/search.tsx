@@ -106,12 +106,12 @@ export default function SearchPage() {
     <DefaultLayout >
       <CategoryPageContent
         title={categoryTitle}
-        comeFromCreator={query?.search}
+        comeFromCreator={query.search ?  query.search.toString() : ''}
         currentScreen={route}
-        book={query?.data}
-        isbn={query?.isbn}
-        products={productsKantro}
-        totalProducts={productsKantro?.length}
+        book={query.data ? JSON.parse(query?.data.toString()) : {}}
+        isbn={query.isbn ? query.isbn.toString() : ''}
+        products={productsKantro || Array()}
+        totalProducts={productsKantro ? productsKantro.length : 0}
         sidebar={
           <>
             <CategorySorting />

@@ -69,7 +69,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     const axiosInstance = axios.create({
         baseURL: 'http://localhost:4000',
     });
-    const [book, setBook] = useState<Book>(JSON.parse(bookDetails))
+    const [book, setBook] = useState<Book>( JSON.parse( JSON.stringify( bookDetails )))
 
 
     const dataPost2 = {
@@ -131,7 +131,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // setDefaultValues({ ...defaultValues, [e.target.name]: e.target.value });
         setBook({ ...book, [e.target.name]: e.target.value });
     };

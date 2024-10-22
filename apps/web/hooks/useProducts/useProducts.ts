@@ -4,7 +4,7 @@ import { GetServerSideEnhancedContext } from '~/helpers/types';
 import { useSdk } from '~/sdk';
 import { getSdk } from "~/sdk.config";
 
-export async function prefetchProducts(context: GetServerSideEnhancedContext, searchPhrase: string | string[]): Promise<GetProducts> {
+export async function prefetchProducts(context: GetServerSideEnhancedContext, searchPhrase: string | string[]): Promise<any> {
   const { queryClient } = context;
   const sdk = getSdk();
   const products = searchPhrase===''
@@ -12,7 +12,7 @@ export async function prefetchProducts(context: GetServerSideEnhancedContext, se
       : await sdk.magento.products({
         pageSize: 20,
         currentPage: 1,
-        search: searchPhrase
+        search: searchPhrase.toString()
       })
 
   queryClient.setQueryData(['products'], products);
@@ -83,7 +83,7 @@ export function useProducts(searchPhrase='') {
           refetchOnWindowFocus: false,
         });
   } else {
-    vaggelis = useQuery(['products' ], () => sdk.magento.products(),
+    vaggelis = useQuery(['products' ], () => sdk.magento.products({}),
         {
           refetchOnMount: false,
           refetchOnWindowFocus: false,
@@ -92,9 +92,9 @@ export function useProducts(searchPhrase='') {
 
   console.log('vag 2', vaggelis.data)
 
-  mockUpProducts.products = vaggelis.data.data.products
-  mockUpProducts.pagination = vaggelis.data.data.products.page_info
-  mockUpProducts.pagination.totalResults = vaggelis.data.data.products.total_count
+  // mockUpProducts.products = vaggelis?.data?.data?.products
+  // mockUpProducts.pagination = vaggelis?.data?.data?.products?.page_info
+  // mockUpProducts.pagination.totalResults = vaggelis?.data?.data?.products?.total_count
   return { data: mockUpProducts }   // edw eixa gamithei 10 wres, epeidh den evaza afto to data
 }
 // ftou xeleftheria mono avto tha pw

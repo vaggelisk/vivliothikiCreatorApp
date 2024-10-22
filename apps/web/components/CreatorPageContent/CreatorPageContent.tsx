@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useRef, useState} from 'react'
+import React, {ChangeEvent, FormEventHandler, useRef, useState} from 'react'
 import {NarrowContainer, Search} from "~/components";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
@@ -57,7 +57,7 @@ export function CreatorPageContent() {
         baseURL: 'http://localhost:4000',
     });
 
-    const { refs } = useDropdown({ isOpen, onClose: close, placement: 'bottom-start', middleware: [offset(4)] });
+    const { refs } = useDropdown({  onClose: close });
 
 
     const dataPost = {
@@ -68,7 +68,7 @@ export function CreatorPageContent() {
         "titles_per_page": "3"
     };
 
-    const handleTitleSubmit = async(event) => {
+    const handleTitleSubmit: FormEventHandler<HTMLFormElement> = async(event) => {
         event.preventDefault()
         await router.push({
             pathname: '/search',
@@ -76,7 +76,7 @@ export function CreatorPageContent() {
         })
     }
 
-    const handleSubmit = async(event) => {
+    const handleSubmit: FormEventHandler<HTMLFormElement> = async(event) => {
         event.preventDefault()
         const dataPost2 = {
             "username" : "evangelos.karakaxis@gmail.com",
@@ -84,23 +84,15 @@ export function CreatorPageContent() {
             "isbn": searchValue
         }
         open()
-        setLoading(true)
-        // avtes edw oi grammes einai gia na mh kopaname synexeia to API
-        // kai mas banarei
-        // let responseBooks = [{
-        //     id: "473674",
-        //     name: "Montana",
-        //     isbn: "498594598948598"
-        // }]
-        // setBooks( responseBooks )
-        // setSearchTitleValue(responseBooks[0].name)
-
-        axiosInstance.post(
-           '/get-book-from-biblionet',
-                dataPost2,
-            { headers: {
-                    "Content-Type": 'application/json',
-                }},
+        setLoading(true)                                         //  avtes edw oi grammes einai gia na mh kopaname synexeia to API
+                                                                       //  kai mas banarei
+                                                                       //  let responseBooks = [{
+        axiosInstance.post(                                            //     id: "473674",
+           '/get-book-from-biblionet',                             //     name: "Montana",
+                dataPost2,                                             //     isbn: "498594598948598"
+            { headers: {                                         //  }]
+                    "Content-Type": 'application/json',                //  setBooks( responseBooks )
+                }},                                                    //  setSearchTitleValue(responseBooks[0].name)
         )
             .then((response) => {
                 let responseBooks: Book[] = response.data[0]?.map((responseBooks: any) => {

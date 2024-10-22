@@ -21,6 +21,10 @@ export type BookFormFields = Record<BookFields, string>;
 
 export type BookFormProps = {
   type?: 'book';
+  titleOfBook?: string;
+  isbnOfBook?: string;
+  bookDetails?: object;
+  savedBook?: object;
   onSave?: () => string;
   onClear?: () => void;
   savedAddress?: BookFormFields | undefined;

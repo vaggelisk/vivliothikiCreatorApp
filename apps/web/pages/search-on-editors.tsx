@@ -15,7 +15,7 @@ export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['c
     // let search = query ? query.search : '';
     let search = context.query.search;
     let isbn = context.query.isbn;
-    const products = await prefetchProducts(context, search);
+    const products = await prefetchProducts(context, search ? search.toString() : '');
 
     if (!products) {
         return {
@@ -46,11 +46,11 @@ export default function SearchOnEditorsPage() {
         <DefaultLayout >
             <CategoryPageContent
                 title={categoryTitle}
-                bookTitle={query?.search}
-                isbn={query?.isbn}
-                products={products.items}
-                book={query?.data}
-                totalProducts={pagination.totalResults}
+                bookTitle={query.search ?  query.search.toString() : ''}
+                isbn={query.isbn ? query.isbn.toString() : ''}
+                products={products ? products : Array()}
+                book={query.data ? JSON.parse(query?.data.toString()) : {}}
+                totalProducts={ Number(pagination.totalResults)}
                 sidebar={
                     <>
                         <CategorySorting />

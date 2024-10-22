@@ -3,11 +3,11 @@ import { SfProductCatalogItem } from '@vue-storefront/unified-data-model';
 
 export interface CategoryPageContentProps extends PropsWithChildren {
   title: string;
-  comeFromCreator: boolean;
-  currentScreen: string;
-  bookTitle: string;
-  isbn: string;
-  book: [];
+  comeFromCreator?: string;
+  currentScreen?: string;
+  bookTitle?: string;
+  isbn?: string;
+  book?: [];
   products: SfProductCatalogItem[];
   totalProducts: number;
   sidebar?: ReactNode;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {FormEventHandler, useState} from 'react'
 import {NarrowContainer, Search} from "~/components";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
@@ -32,7 +32,7 @@ export function CreatorBookForm() {
     // a local state to store the currently selected file.
 
 
-    const handleSubmit = async(event) => {
+    const handleSubmit: FormEventHandler<HTMLFormElement> = async(event) => {
         // event.preventDefault()
         // const formData = new FormData();
         // formData.append("filename", selectedFile);
@@ -50,19 +50,19 @@ export function CreatorBookForm() {
         // }
     }
 
-    const handleTitleFromSearch = (val) => {
-        setTitle(val)
+    const handleTitleFromSearch = (val: string) => {
+        // setTitle(val)
     }
 
-    const handleFileSelect = (event) => {
-        setSelectedFile(event.target.files[0])
-        if (event.target.files) {
-            if (event.target.files.length !== 0) {
-                const file = event.target.files[0];
-                const newUrl = URL.createObjectURL(file);
-                setSource(newUrl);
-            }
-        }
+    const handleFileSelect: FormEventHandler<HTMLFormElement> = (event) => {
+        // setSelectedFile(event.target.files[0])
+        // if (event.target.files) {
+        //     if (event.target.files.length !== 0) {
+        //         const file = event.target.files[0];
+        //         const newUrl = URL.createObjectURL(file);
+        //         setSource(newUrl);
+        //     }
+        // }
     }
 
     const classes = useStyles();
@@ -75,32 +75,32 @@ export function CreatorBookForm() {
       <NarrowContainer>
           <div className={classes.root}>
               <Grid container>
-                  <Grid item xs={12}>
-                      <form>
-                          <input
-                              accept="image/*"
-                              className={classes.input}
-                              id="icon-button-file"
-                              type="file"
-                              // onChange={handleFileSelect}
-                              onChange={handleFileSelect}
-                          />
-                          <label htmlFor="icon-button-file">
-                              <IconButton
-                                  color="primary"
-                                  aria-label="upload picture"
-                                  component="span"
-                              >
-                                  <PhotoCameraRoundedIcon fontSize="large" color="primary" />
-                              </IconButton>
-                          </label>
-                          <div>
-                              <SfButton onClick={handleSubmit}
-                                        size="lg" className="mb-4 md:mb-0">
-                                  Υποβολή
-                              </SfButton>
-                          </div>
-                      </form>
+                  {/*<Grid item xs={12}>*/}
+                  {/*    <form>*/}
+                  {/*        <input*/}
+                  {/*            accept="image/*"*/}
+                  {/*            className={classes.input}*/}
+                  {/*            id="icon-button-file"*/}
+                  {/*            type="file"*/}
+                  {/*            // onChange={handleFileSelect}*/}
+                  {/*            onChange={handleFileSelect}*/}
+                  {/*        />*/}
+                  {/*        <label htmlFor="icon-button-file">*/}
+                  {/*            <IconButton*/}
+                  {/*                color="primary"*/}
+                  {/*                aria-label="upload picture"*/}
+                  {/*                component="span"*/}
+                  {/*            >*/}
+                  {/*                <PhotoCameraRoundedIcon fontSize="large" color="primary" />*/}
+                  {/*            </IconButton>*/}
+                  {/*        </label>*/}
+                  {/*        <div>*/}
+                  {/*            <SfButton onClick={handleSubmit}*/}
+                  {/*                      size="lg" className="mb-4 md:mb-0">*/}
+                  {/*                Υποβολή*/}
+                  {/*            </SfButton>*/}
+                  {/*        </div>*/}
+                  {/*    </form>*/}
 
                       {/*<h5>Φωτογράφησε</h5>*/}
                       {/*<h5>τον τίτλο του βιβλίου</h5>*/}
@@ -116,7 +116,7 @@ export function CreatorBookForm() {
                       {/*    </Box>*/}
                       {/*)}*/}
 
-                  </Grid>
+                  {/*</Grid>*/}
               </Grid>
           </div>
       </NarrowContainer>

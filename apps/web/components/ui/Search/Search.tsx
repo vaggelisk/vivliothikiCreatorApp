@@ -1,4 +1,4 @@
-import { type ChangeEvent, type FormEvent, useState, useRef } from 'react';
+import {type ChangeEvent, type FormEvent, useState, useRef, FormEventHandler} from 'react';
 import { useRouter } from 'next/router';
 import { offset } from '@floating-ui/react-dom';
 import {
@@ -16,22 +16,22 @@ import type { SearchProps } from '~/components';
 export function Search({ className, outerComp, bookDetails, isbnOfBook, titleOfBook, curScreen }: SearchProps) {
   const inputReference = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState( titleOfBook ? titleOfBook : '');
-  const [modalName, setModalName] = useState( className ? className.modalOf : '');
+  // const [modalName, setModalName] = useState( className ? className.modalOf : '');
   const [currentScreen] = useState(curScreen ? curScreen : '');
   // const [outerComp, setOuterComp] = useState(className.outerComp);
   const router = useRouter();
   const { isOpen, close, open } = useDisclosure({ initialValue: true });
-  const { refs } = useDropdown({ isOpen, onClose: close, placement: 'bottom-start', middleware: [offset(4)] });
+  const { refs } = useDropdown({  onClose: close, });
   useTrapFocus(refs.floating, { arrowKeysOn: true, activeState: isOpen, initialFocus: false });
 
-  const handleSubmit = async (event) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
     close();
     if (currentScreen==="/search") {
       // noinspection TypeScriptValidateTypes
       await router.push({
         pathname: '/search-on-editors',
-        query: { search: searchValue, isbn: isbnOfBook, data: bookDetails}
+        query: { search: searchValue, isbn: isbnOfBook, data: JSON.stringify(bookDetails)}
       })
     } else {
       await router.push(`/search?search=${searchValue}`);

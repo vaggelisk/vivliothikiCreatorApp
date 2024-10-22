@@ -13,7 +13,7 @@ import { DefaultLayout } from '~/layouts';
 
 export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['category'] }, async (context) => {
   context.res.setHeader('Cache-Control', 'no-cache');
-  const products = await prefetchProducts(context);
+  const products = await prefetchProducts(context, '');
 
   console.log('vag', products)
 
@@ -53,8 +53,8 @@ export default function CategoryPage() {
     <DefaultLayout breadcrumbs={breadcrumbs}>
       <CategoryPageContent
         title={t('allProducts')}
-        products={products}
-        totalProducts={pagination.totalResults}
+        products={Array()}
+        totalProducts={Number(20)}
         sidebar={
           <>
             <CategoryTree parent={{ name: t('allProducts'), href: '/category' }} categories={categories} />

@@ -1,6 +1,5 @@
 import { useTranslation } from 'next-i18next';
 import {
-  Creator2PageContent,
   Breadcrumb,
   CategoryTreeItem,
 } from '~/components';
@@ -20,7 +19,8 @@ export function Creator2Page() {
 
   return (
     <DefaultLayout breadcrumbs={breadcrumbs}>
-      <Creator2PageContent />
+      <div></div>
+      {/*<Creator2PageContent />*/}
     </DefaultLayout>
   );
 }
