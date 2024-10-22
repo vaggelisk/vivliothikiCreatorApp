@@ -21,7 +21,7 @@ import cors from "cors";
         credentials: true,
     });
 
-    app.listen(port, 'localhost', () => {
-        console.log(`Middleware started: http://localhost:${port}`);
-    });
+    // app.listen(port, 'localhost', () => {
+    //     console.log(`Middleware started: http://localhost:${port}`);
+    // });
 })();

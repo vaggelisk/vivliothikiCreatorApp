@@ -10,8 +10,10 @@
     "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
+    "@types/cors": "^2.8.17",
     "@vue-storefront/middleware": "^3.8.0",
     "consola": "^2.15.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "nodemon": "^2.0.19",
     "ts-node-dev": "^2.0.0"

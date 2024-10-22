@@ -3,11 +3,27 @@ import consola from 'consola';
 import config from '../middleware.config';
 import https from "https";
 import http from "http";
+import cors from "cors";
+
 
 (async () => {
   const app = await createServer({ integrations: config.integrations });
   const host = process.argv[2] ?? '::';
   const port = Number(process.argv[3]) || 4000;
+
+  // const CORS_MIDDLEWARE_NAME = "corsMiddleware";
+  // const corsMiddleware = app._router.stack.find(
+  //     (middleware) => middleware.name === CORS_MIDDLEWARE_NAME
+  // );
+  //
+  // corsMiddleware.handle = cors({
+  //   origin: "https://librarian.notia-evia.gr",
+  //   credentials: true,
+  // });
+
+  // const corsKantro = cors()
+
+  app.use(cors())
 
   app.listen(port, host, () => {
     consola.success(`API server listening on http://localhost:${port}`);
