@@ -92,7 +92,6 @@ export function CreatorPageContent() {
                 dataPost2,                                             //     isbn: "498594598948598"
             { headers: {                                         //  }]
                     "Content-Type": 'application/json',                //  setBooks( responseBooks )
-                    "Access-Control-Allow-Origin": "https://librarian-api.notia-evia.gr"
             }},                                                        //  setSearchTitleValue(responseBooks[0].name)
         )
             .then((response) => {
