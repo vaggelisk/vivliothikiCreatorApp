@@ -54,7 +54,7 @@ export function CreatorPageContent() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const axiosInstance = axios.create({
-        baseURL: 'http://localhost:4000',
+        baseURL: 'http://127.0.0.1:4000',
     });
 
     const { refs } = useDropdown({  onClose: close });

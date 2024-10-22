@@ -67,7 +67,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     const [summary, setSummary ] = useState('');
     const [loading, setLoading] = useState(true);
     const axiosInstance = axios.create({
-        baseURL: 'http://localhost:4000',
+        baseURL: 'http://127.0.0.1:4000',
     });
     const [book, setBook] = useState<Book>( JSON.parse( JSON.stringify( bookDetails )))
 

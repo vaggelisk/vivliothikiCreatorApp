@@ -3,7 +3,7 @@ import { SdkModule, sdkModule } from '@vue-storefront/storefront-boilerplate-sdk
 
 const options: CreateSdkOptions = {
   middleware: {
-    apiUrl: 'http://localhost:4000',
+    apiUrl: 'http://127.0.0.1:4000',
   },
 };
 
