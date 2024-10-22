@@ -20,7 +20,7 @@ export interface Post {
 }
 
 const axiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:4000',
+    baseURL: 'https://librarian-api.notia-evia.gr',
 });
 
 const queryPostList: () => Promise<Post[]> = async () => {
