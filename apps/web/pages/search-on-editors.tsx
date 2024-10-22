@@ -17,11 +17,11 @@ export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['c
     let isbn = context.query.isbn;
     const products = await prefetchProducts(context, search ? search.toString() : '');
 
-    if (!products) {
-        return {
-            notFound: true,
-        };
-    }
+    // if (!products) {
+    //     return {
+    //         notFound: true,
+    //     };
+    // }
 
     return { props: {} };
 });

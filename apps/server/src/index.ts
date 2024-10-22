@@ -11,20 +11,7 @@ import cors from "cors";
   const host = process.argv[2] ?? '::';
   const port = Number(process.argv[3]) || 4000;
 
-  // const CORS_MIDDLEWARE_NAME = "corsMiddleware";
-  // const corsMiddleware = app._router.stack.find(
-  //     (middleware) => middleware.name === CORS_MIDDLEWARE_NAME
-  // );
-  //
-  // corsMiddleware.handle = cors({
-  //   origin: "https://librarian.notia-evia.gr",
-  //   credentials: true,
-  // });
-
-  // const corsKantro = cors()
-
   app.use(cors({
-        // origin: "https://librarian.notia-evia.gr",
         origin: [
             "https://librarian.notia-evia.gr",
             // ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(",") ?? []),
@@ -35,7 +22,7 @@ import cors from "cors";
   ));
 
   app.listen(port, host, () => {
-    consola.success(`API server listening on http://localhost:${port}`);
+    consola.success(`API server listening on https://localhost:${port}`);
   });
 
 
