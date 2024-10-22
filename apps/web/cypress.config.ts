@@ -12,7 +12,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://librarian.notia-evia.gr',
     specPattern: '__tests__/test/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: '__tests__/support/e2e.ts',
   },

@@ -13,10 +13,11 @@ import cors from "cors";
     );
 
     corsMiddleware.handle = cors({
-        origin: [
-            "https://librarian.notia-evia.gr",
-            ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(",") ?? []),
-        ],
+        origin: "https://librarian.notia-evia.gr",
+        // origin: [
+        //     "https://librarian.notia-evia.gr",
+        //     ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(",") ?? []),
+        // ],
         credentials: true,
     });
 
