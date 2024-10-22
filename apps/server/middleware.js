@@ -14,7 +14,7 @@ import cors from "cors";
 
     corsMiddleware.handle = cors({
         origin: [
-            "http://localhost:3000",
+            "https://librarian.notia-evia.gr",
             ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(",") ?? []),
         ],
         credentials: true,
