@@ -84,7 +84,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     }
 
     useEffect(() => {
-        axios.post( 'https://biblionet.gr/webservice/get_title_subject', dataPost2 )
+        axiosInstance.post('/get-subject-book-from-biblionet', dataPost2)
             .then((response) => {
                 if (response.status >= 400) {
                     throw new Error("server error");
@@ -103,8 +103,9 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
             .finally(() => setLoading(false));
 
 
-        axios.post( 'https://biblionet.gr/webservice/get_title', dataPost3 )
-            .then((response) => {
+        axiosInstance.post('/get-book-from-biblionet', dataPost3,
+            { headers: {"Content-Type": 'application/json'}},
+            ).then((response) => {
                 if (response.status >= 400) {
                     throw new Error("server error");
                 }
@@ -115,8 +116,9 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                 })
                 setSummary(responseBooks[0].Summary)
             })
-            .catch((error) => setError(error))
-            .finally(() => setLoading(false));
+                .catch((error) => setError(error))
+                .finally(() => setLoading(false));
+
 
     }, []
     );

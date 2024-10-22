@@ -3,7 +3,6 @@ import consola from 'consola';
 import config from '../middleware.config';
 import https from "https";
 import http from "http";
-import {response} from "express";
 
 (async () => {
   const app = await createServer({ integrations: config.integrations });
@@ -14,20 +13,14 @@ import {response} from "express";
     consola.success(`API server listening on http://localhost:${port}`);
   });
 
-  app.post('/hello', (req, res) => {
-    const data = [{
-      id: "2",
-      title: "1984",
-      description: "George Orwell",
-      content: "Something good",
-    }]
-
-    console.log(req.body)
-
+  app.post('/search-inside', (req, res) => {
+    const data =  JSON.stringify(req.body)      //   {
+                                                //     title: "Ένας τάφος για τη Νέα Υόρκη",
+                                                //   }
     const options = {
       host: "api.notia-evia.gr",
-      // host: "evia.pyconero.gr",
-      path: "/rest/V1/custom/search-inside/kati",
+      // host: "yourdomain.gr",
+      path: "/rest/V1/custom/search-inside/title",
       method: "POST",
       headers: {
         "Content-Type": " application/json; charset=UTF-8",
@@ -35,26 +28,27 @@ import {response} from "express";
     };
 
     const httpreq = https.request(options, function (response) {
+      let body="";
       response.on('data', function (chunk) {
-        let str = JSON.stringify(chunk)
-        console.log("body: " + chunk);
-        res.send( chunk )
+        body += chunk
       });
-
+      response.on('end', ()=> {
+        res.send(body);
+      })
     });
-    res.end(JSON.stringify({
-      data: 'Hello World!',
-    }));
+
+    httpreq.write(data)
+    httpreq.end();
+
 
   })
 
-  app.post('/create-book', (req, res) => {
 
-    const dataPost = JSON.stringify( req.body )
-    // const dataPost = JSON.stringify( {
-    //   "customer_id": "5",
-    //   "title": "1985"
-    // } )
+  app.post('/create-book', (req, res) => {
+    const dataPost = JSON.stringify( req.body )         // const dataPost = JSON.stringify( {
+                                                        //   "customer_id": "5",
+                                                        //   "title": "1985"
+                                                        // } )
     const options = {
       host: "api.notia-evia.gr",
       path: "/rest/V1/custom/create-book/new",
@@ -79,42 +73,64 @@ import {response} from "express";
 
   })
 
-  app.post('/get-book-from-biblionet', (req, res) => {
 
-    const dataPost = req.body;
-    // const dataPost = {
-    //   "username" : "evangelos.karakaxis@gmail.com",
-    //   "password" : "testing123",
-    //   "year" : "2023",
-    //   "month" : "8",
-    //   "titles_per_page" : "3"
-    // };
 
-    const options = {
-      host: "biblionet.gr",
-      path: "/webservice/get_month_titles",
+
+
+  app.post('/get-subject-book-from-biblionet', (req, res) => {
+    const dataPost4 = JSON.stringify(req.body);                //  const dataPost4 = JSON.stringify( {
+                                                               //       "username" : "evangelos.karakaxis@gmail.com",
+                                                               //       "password" : "testing123",
+    const options = {                                          //       "title": "195086"
+      host: "biblionet.gr",                                    //   })
+      path: "/webservice/get_title_subject",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // 'Content-Length': Buffer.byteLength(dataPost)
+      }
+    };
+    const request4 = https.request(options, function (response) {
+      response.setEncoding('utf8');
+      let body="";
+      response.on('data', function (chunk) {
+        body = body + chunk.toString();  // aggregate data
+      })
+      response.on('end', () => {
+        res.send(body)
+      })
+    });
+    request4.write( dataPost4);
+    request4.end();
+
+
+  })
+
+
+  app.post('/get-book-from-biblionet', (req, res) => {
+    const dataPost = JSON.stringify(req.body);                  // const dataPost = {
+                                                                //   "username" : "evangelos.karakaxis@gmail.com",
+    const options = {                                           //   "password" : "testing123",
+      host: "biblionet.gr",                                     //   "isbn": "9789608104556"
+      path: "/webservice/get_title",                            // };
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       }
     };
 
     // Create the HTTP request
-    const request = https.request(options, function (response) {
+    const request3 = https.request(options, function (response) {
       response.setEncoding('utf8');
+      let body="";
       response.on('data', function (chunk) {
-        let str = JSON.stringify(chunk)
-        // console.log("body: " + chunk);
-        res.send( str )
-      });
-
+        body = body + chunk.toString();  // aggregate data
+      })
+      response.on('end', () => {
+        res.send(body)
+      })
     });
-    request.write( JSON.stringify(dataPost) );
-    // request.end( );
-    res.end(JSON.stringify({
-      data: response.json,
-    }));
+    request3.write(dataPost);
+    request3.end();
 
   })
 

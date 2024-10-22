@@ -42,57 +42,20 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-// type Book = {
-//     TitlesID: string;
-//     CoverImage: string ;
-//     Title: string ;
-//     Subtitle: string;
-//     ISBN: string;
-//     PublisherID: string;
-//     Publisher: string;
-//     WriterID: string;
-//     Writer: string;
-//     WriterName: string;
-//     FirstPublishDate: string;
-//     CurrentPublishDate: string;
-//     PlaceID: string;
-//     Place: string;
-//     EditionNo: string;
-//     Cover: string;
-//     Dimensions: string;
-//     PageNo: string;
-//     Availability: string;
-//     Price: string;
-//     VAT: string;
-//     Weight: string;
-//     AgeFrom: string;
-//     AgeTo: string;
-//     Summary: string ;
-//     LanguageID: string;
-//     Language: string;
-//     LanguageOriginalID: string;
-//     LanguageOriginal: string;
-//     LanguageTranslatedFromID: string;
-//     LanguageTranslatedFrom: string;
-//     Series: string;
-//     MultiVolumeTitle: string;
-//     VolumeNo: string;
-//     VolumeCount: string;
-//     Specifications: string;
-//     Comments: string;
-//     CategoryID: string;
-//     Category: string;
-// }
+
 
 export function CreatorPageContent() {
     // a local state to store the currently selected file.
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
     const [searchTitleValue, setSearchTitleValue] = useState('')
     const inputReference = useRef<HTMLInputElement>(null);
-    const [searchValue, setSearchValue] = useState('9789601669236')
+    const [searchValue, setSearchValue] = useState('9789608104556')
     const [book, setBook] = useState<Book | undefined>(undefined)
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const axiosInstance = axios.create({
+        baseURL: 'http://localhost:4000',
+    });
 
     const { refs } = useDropdown({ isOpen, onClose: close, placement: 'bottom-start', middleware: [offset(4)] });
 
@@ -120,10 +83,6 @@ export function CreatorPageContent() {
             "password" : "testing123",
             "isbn": searchValue
         }
-
-
-
-
         open()
         setLoading(true)
         // avtes edw oi grammes einai gia na mh kopaname synexeia to API
@@ -135,7 +94,14 @@ export function CreatorPageContent() {
         // }]
         // setBooks( responseBooks )
         // setSearchTitleValue(responseBooks[0].name)
-        axios.post( 'https://biblionet.gr/webservice/get_title', dataPost2 )
+
+        axiosInstance.post(
+           '/get-book-from-biblionet',
+                dataPost2,
+            { headers: {
+                    "Content-Type": 'application/json',
+                }},
+        )
             .then((response) => {
                 let responseBooks: Book[] = response.data[0]?.map((responseBooks: any) => {
                     return {
@@ -185,7 +151,6 @@ export function CreatorPageContent() {
                     setSearchTitleValue(responseBooks[0].Title)
                     setLoading(false)
                 } else {
-                    console.log('baggelis')
                     router.push(`/cart`); // TODO prepei na phgainei sth forma createBook me kenh forma
                 }
 

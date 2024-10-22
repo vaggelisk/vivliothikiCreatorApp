@@ -13,11 +13,11 @@ import {
 import classNames from 'classnames';
 import type { SearchProps } from '~/components';
 
-export function Search({ className, outerComp, bookDetails, isbnOfBook }: SearchProps) {
+export function Search({ className, outerComp, bookDetails, isbnOfBook, titleOfBook, curScreen }: SearchProps) {
   const inputReference = useRef<HTMLInputElement>(null);
-  const [searchValue, setSearchValue] = useState( className ? className.tit : '');
+  const [searchValue, setSearchValue] = useState( titleOfBook ? titleOfBook : '');
   const [modalName, setModalName] = useState( className ? className.modalOf : '');
-  const [currentScreen] = useState(className ? className.curScreen : '');
+  const [currentScreen] = useState(curScreen ? curScreen : '');
   // const [outerComp, setOuterComp] = useState(className.outerComp);
   const router = useRouter();
   const { isOpen, close, open } = useDisclosure({ initialValue: true });
