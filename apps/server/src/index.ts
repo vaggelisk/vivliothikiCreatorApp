@@ -23,7 +23,16 @@ import cors from "cors";
 
   // const corsKantro = cors()
 
-  app.use(cors())
+  app.use(cors({
+        // origin: "https://librarian.notia-evia.gr",
+        origin: [
+            "https://librarian.notia-evia.gr",
+            // ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(",") ?? []),
+        ],
+        credentials: true,
+      }
+
+  ));
 
   app.listen(port, host, () => {
     consola.success(`API server listening on http://localhost:${port}`);
