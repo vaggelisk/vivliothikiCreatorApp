@@ -1,13 +1,22 @@
 import { FormEventHandler, useEffect, useRef, useState } from 'react';
-import { SfButton, SfCheckbox, SfInput, SfLoaderCircular, SfSelect } from '@storefront-ui/react';
+import {
+    SfButton,
+    SfCheckbox,
+    SfIconClose,
+    SfInput,
+    SfLoaderCircular,
+    SfModal,
+    SfSelect,
+    useDisclosure
+} from '@storefront-ui/react';
 import { useTranslation } from 'next-i18next';
-import { FormHelperText, FormLabel } from '~/components';
+import {FormHelperText, FormLabel, Overlay} from '~/components';
 import type {BookFormFields, BookFormProps} from "~/components/CreatorBookForm/types";
 import axios from "axios";
 import type { Book } from "~/components/CreatorBookForm/types";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
-
-
+import {ContactInformationForm} from "~/components/ContactInformation/ContactInformationForm";
+import {useRouter} from "next/router";
 
 
 const emptyBook: Book = {
@@ -60,6 +69,9 @@ const emptyBook: Book = {
 export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOfBook, bookDetails }: BookFormProps): JSX.Element {
     const { t } = useTranslation('address');
     const isCartUpdateLoading = false;
+    const { isOpen, open, close } = useDisclosure({ initialValue: false });
+    const router = useRouter();
+
 
     const formReference = useRef<HTMLFormElement>(null);
 
@@ -84,6 +96,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     }
 
     useEffect(() => {
+        open()
         axiosInstance.post('/get-subject-book-from-biblionet', dataPost2)
             .then((response) => {
                 if (response.status >= 400) {
@@ -116,8 +129,8 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                 })
                 setSummary(responseBooks[0].Summary)
             })
-                .catch((error) => setError(error))
-                .finally(() => setLoading(false));
+            .catch((error) => setError(error))
+            .finally(() => setLoading(false));
 
 
     }, []
@@ -132,25 +145,35 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // setDefaultValues({ ...defaultValues, [e.target.name]: e.target.value });
         setBook({ ...book, [e.target.name]: e.target.value });
     };
 
 
     const handleSave: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
-        try {
-            setBook(Object.assign(book, {
-                customer_id: '2',
-                Summary: summary
-            }))
-            console.log('Form data submitted successfully:', book);
-            const response = axiosInstance.post('/create-book', book);
-            // You can add additional logic here, such as displaying a success message
-        } catch (error) {
-            console.error('Error submitting form data:', error);
-            // You can add error handling logic here, such as displaying an error message
-        }
+        setBook(Object.assign(book, {
+            customer_id: '2',
+            Summary: summary
+        }))
+        console.log('Form data submitted successfully:', book);
+        axiosInstance.post('/create-book', book)
+            .then((response) => {
+                    if (response.status >= 400) {
+                        throw new Error("server error");
+                    }
+                    if (response.status == 200) {
+                        open()
+
+                        let count = 0;
+                        //Implementing the setInterval method
+                        setTimeout(() => {
+                            router.push(`/`)
+                        }, 3000);
+
+                    }
+                }
+            )
+            .catch((error) => setError(error))
 
     };
 
@@ -221,6 +244,31 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
 
 
 
+
+
+        {isOpen && (
+            <Overlay visible={isOpen}>
+                <SfModal
+                    as="section"
+                    role="dialog"
+                    className=" overflow-auto md:w-[600px] md:h-fit"
+                    open={isOpen}
+                    onClose={close}
+                    aria-labelledby="contact-modal-title"
+                >
+                    <header>
+                        <SfButton square variant="tertiary" className="absolute right-2 top-2" onClick={close}>
+                            <SfIconClose />
+                        </SfButton>
+                        <h3 id="contact-modal-title" className="text-neutral-900 text-lg md:text-2xl font-bold mb-4">
+                            Η εισαγωγή του βιβλίου έγινε με επιτυχία
+                        </h3>
+                    </header>
+                    <div className="text-neutral-900 text-lg">σε λίγα δευτερόλεπτα θα επιστρέψετε στην Αρχική</div>
+                </SfModal>
+            </Overlay>
+        )}
         </form>
+
     );
 }

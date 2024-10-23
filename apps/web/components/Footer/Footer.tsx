@@ -13,32 +13,13 @@ export function Footer({ className = '' }: { className?: string }): JSX.Element 
         className="grid gap-5 justify-center grid-cols-[1fr_1fr] md:grid-cols-[repeat(4,1fr)] px-4 md:px-6 pb-10 mx-auto max-w-screen-3xl"
         data-testid="section-top"
       >
-        {categories.map(({ key, subcategories }) => (
-          <div key={key} className="min-w-[25%] xs:min-w-[50%] flex flex-col">
-            <p className="font-medium leading-7 text-neutral-900 text-lg pb-2">{t(`categories.${key}.label`)}</p>
-            {subcategories?.map(({ link, key: subcategoryKey }) => (
-              <Link
-                href={link}
-                className="text-sm leading-5 py-2 text-neutral-600 hover:underline"
-                key={subcategoryKey}
-              >
-                {t(`categories.${key}.subcategories.${subcategoryKey}`)}
-              </Link>
-            ))}
-          </div>
-        ))}
+
       </div>
       <Divider />
       <div className="py-10 lg:flex mx-auto max-w-screen-3xl" data-testid="section-middle">
         {contactOptions.map(({ icon, link, details, key }) => (
           <div key={key} className="mx-auto my-4 text-center flex flex-col items-center">
             {icon}
-            <Link
-              href={link}
-              className="py-1 my-2 font-medium typography-text-lg font-body no-underline text-neutral-600 hover:underline hover:!text-neutral-900 active:underline active:!text-neutral-900"
-            >
-              {t(`contactOptions.${key}.label`)}
-            </Link>
             {details?.map((option) => (
               <p className="text-sm leading-5" key={option}>
                 {t(`contactOptions.${key}.details.${option}`)}
@@ -74,7 +55,10 @@ export function Footer({ className = '' }: { className?: string }): JSX.Element 
             ))}
           </div>
           <p className="flex items-center justify-center leading-5 text-center typography-text-sm text-white/50 font-body md:ml-6">
-            {companyName}
+            αυτοοργανωμένη βιβλιοθήκη
+          </p>
+            <p className="flex items-center justify-center leading-5 text-center typography-text-sm text-white/50 font-body md:ml-6">
+            νότιας εύβοιας
           </p>
         </div>
       </div>

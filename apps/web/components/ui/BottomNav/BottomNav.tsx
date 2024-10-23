@@ -30,15 +30,6 @@ const getItems = (cartLineItemsCount?: number) => [
     icon: <SfIconSearch />,
     path: '/search',
   },
-  {
-    label: 'cart',
-    icon: (
-      <Badge bordered value={cartLineItemsCount} className="text-neutral-900 bg-white" data-testid="cart-badge">
-        <SfIconShoppingCart />
-      </Badge>
-    ),
-    path: '/cart',
-  },
 ];
 
 export function BottomNav({ ...attributes }) {

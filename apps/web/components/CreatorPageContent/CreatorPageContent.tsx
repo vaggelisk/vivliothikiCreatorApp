@@ -49,7 +49,7 @@ export function CreatorPageContent() {
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
     const [searchTitleValue, setSearchTitleValue] = useState('')
     const inputReference = useRef<HTMLInputElement>(null);
-    const [searchValue, setSearchValue] = useState('9789608104556')
+    const [searchValue, setSearchValue] = useState('978960')
     const [book, setBook] = useState<Book | undefined>(undefined)
     const [loading, setLoading] = useState(false);
     const router = useRouter();
