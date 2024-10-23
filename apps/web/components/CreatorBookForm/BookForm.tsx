@@ -96,7 +96,6 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     }
 
     useEffect(() => {
-        open()
         axiosInstance.post('/get-subject-book-from-biblionet', dataPost2)
             .then((response) => {
                 if (response.status >= 400) {
