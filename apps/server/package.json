@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "./src/index.ts",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "dev": "nodemon",
     "start": "nodemon",
