@@ -29,7 +29,11 @@ export default function Checkout() {
   }
 
   return (
-    <CheckoutLayout backHref="/cart" backLabel={t('back')} heading={t('checkout')}>
+    <CheckoutLayout backHref="/cart"
+                    backLabel={t('back')}
+                    forwardLabel="Forward"
+                    forwardHref="/"
+                    heading={t('checkout')}>
       <div className="md:grid md:grid-cols-12 md:gap-x-6">
         <div className="col-span-7 mb-10 md:mb-0">
           <Divider className="w-screen md:w-auto -mx-4 md:mx-0" />

@@ -44,7 +44,7 @@ export function CheckoutLayout({ backLabel, backHref, forwardLabel, forwardHref,
               </SfButton>
               <SfButton
                 as={Link}
-                href={forwardHref}
+                href={forwardHref ? forwardHref : '/'}
                 className="flex md:hidden whitespace-nowrap"
                 size="sm"
                 variant="tertiary"
@@ -54,7 +54,7 @@ export function CheckoutLayout({ backLabel, backHref, forwardLabel, forwardHref,
               </SfButton>
               <SfButton
                 as={Link}
-                href={forwardHref}
+                href={forwardHref ? forwardHref : '/'}
                 className="hidden md:flex"
                 variant="tertiary"
                 slotPrefix={<SfIconArrowForward />}
