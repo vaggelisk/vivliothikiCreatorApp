@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import Link from 'next/link';
-import { SfButton, SfIconArrowBack, SfLoaderCircular } from '@storefront-ui/react';
+import {SfButton, SfIconArrowBack, SfIconArrowForward, SfLoaderCircular} from '@storefront-ui/react';
 import { NarrowContainer, Footer, NavbarTop } from '~/components';
 import { useCart } from '~/hooks';
 
@@ -8,9 +8,11 @@ interface CheckoutLayoutProps extends PropsWithChildren {
   heading: string;
   backHref: string;
   backLabel: string;
+  forwardHref: string;
+  forwardLabel: string;
 }
 
-export function CheckoutLayout({ backLabel, backHref, children, heading }: CheckoutLayoutProps): JSX.Element {
+export function CheckoutLayout({ backLabel, backHref, forwardLabel, forwardHref, children, heading }: CheckoutLayoutProps): JSX.Element {
   const { data: cart, isLoading } = useCart();
 
   return (
@@ -39,6 +41,25 @@ export function CheckoutLayout({ backLabel, backHref, children, heading }: Check
                 slotPrefix={<SfIconArrowBack />}
               >
                 {backLabel}
+              </SfButton>
+              <SfButton
+                as={Link}
+                href={forwardHref}
+                className="flex md:hidden whitespace-nowrap"
+                size="sm"
+                variant="tertiary"
+                slotPrefix={<SfIconArrowForward />}
+              >
+                {forwardLabel}
+              </SfButton>
+              <SfButton
+                as={Link}
+                href={forwardHref}
+                className="hidden md:flex"
+                variant="tertiary"
+                slotPrefix={<SfIconArrowForward />}
+              >
+                {forwardLabel}
               </SfButton>
             </div>
             {isLoading && !cart ? (

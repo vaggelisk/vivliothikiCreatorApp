@@ -78,6 +78,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     const [error, setError] = useState(null);
     const [summary, setSummary ] = useState('');
     const [loading, setLoading] = useState(true);
+    const [loading2, setLoading2] = useState(true);
     const axiosInstance = axios.create({
         baseURL: 'https://librarian-api.notia-evia.gr',
     });
@@ -96,27 +97,28 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     }
 
     useEffect(() => {
-        axiosInstance.post('/get-subject-book-from-biblionet', dataPost2)
-            .then((response) => {
-                if (response.status >= 400) {
-                    throw new Error("server error");
-                }
-                let responseBooks: Book[] = response.data[0]?.map((responseBooks: any) => {
-                    return {
-                        SubjectsID: responseBooks.SubjectsID,
-                        SubjectTitle: responseBooks.SubjectTitle,
-                        SubjectDDC: responseBooks.SubjectDDC,
-                        SubjectOrder: responseBooks.SubjectOrder,
+        if (book.TitlesID) {        // avto shmainei oti to exei vrei sto biblionet
+            axiosInstance.post('/get-subject-book-from-biblionet', dataPost2)
+                .then((response) => {
+                    if (response.status >= 400) {
+                        throw new Error("server error");
                     }
+                    let responseBooks: Book[] = response.data[0]?.map((responseBooks: any) => {
+                        return {
+                            SubjectsID: responseBooks.SubjectsID,
+                            SubjectTitle: responseBooks.SubjectTitle,
+                            SubjectDDC: responseBooks.SubjectDDC,
+                            SubjectOrder: responseBooks.SubjectOrder,
+                        }
+                    })
+                    setBook(Object.assign(book, responseBooks[0]))
                 })
-                setBook( Object.assign(book, responseBooks[0]) )
-            })
-            .catch((error) => setError(error))
-            .finally(() => setLoading(false));
+                .catch((error) => setError(error))
+                .finally(() => setLoading2(false));
 
 
-        axiosInstance.post('/get-book-from-biblionet', dataPost3,
-            { headers: {"Content-Type": 'application/json'}},
+            axiosInstance.post('/get-book-from-biblionet', dataPost3,
+                {headers: {"Content-Type": 'application/json'}},
             ).then((response) => {
                 if (response.status >= 400) {
                     throw new Error("server error");
@@ -128,9 +130,13 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                 })
                 setSummary(responseBooks[0].Summary)
             })
-            .catch((error) => setError(error))
-            .finally(() => setLoading(false));
-
+                .catch((error) => setError(error))
+                .finally(() => setLoading(false));
+        } else {
+            if (isbnOfBook != null) {
+                book.ISBN = isbnOfBook
+            }
+        }
 
     }, []
     );
@@ -233,6 +239,19 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                 <SfInput name="SubjectNumber"
                          onChange={handleChange}
                          defaultValue={book.SubjectDDC}  />
+            </label>
+            <label className=" md:col-span-2">
+                <FormLabel>ISBN</FormLabel>
+                <SfInput
+                    name="isbn"
+                    onChange={handleChange}
+                    defaultValue={book.ISBN}  />
+            </label>
+            <label  className=" md:col-span-2">
+                <FormLabel>ISBN2</FormLabel>
+                <SfInput name="isbn2"
+                         onChange={handleChange}
+                         defaultValue={isbnOfBook}  />
             </label>
             <label className="col-span-2 ">
                 <div className="col-span-2 pb-4">

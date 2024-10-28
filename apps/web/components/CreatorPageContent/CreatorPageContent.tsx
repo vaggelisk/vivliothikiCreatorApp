@@ -143,7 +143,7 @@ export function CreatorPageContent() {
                     setSearchTitleValue(responseBooks[0].Title)
                     setLoading(false)
                 } else {
-                    router.push(`/cart`); // TODO prepei na phgainei sth forma createBook me kenh forma
+                    router.push(`/cart?isbn=${searchValue}`); // TODO prepei na phgainei sth forma createBook me kenh forma
                 }
 
             })
