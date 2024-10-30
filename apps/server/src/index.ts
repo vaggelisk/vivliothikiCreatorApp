@@ -147,4 +147,39 @@ import cors from "cors";
 
   })
 
+  app.post('/get-book-from-politeianet', (req, res) => {
+    const dataPost = JSON.stringify(req.body);
+
+    let params = {
+      title: encodeURI('ευβοια'),
+    }
+
+    const options = {
+      host: "politeianet.gr",
+      path: `/index.php?option=com_virtuemart&Itemid=89&keyword=${params.title}`,                            // };
+      method: "GET",
+      headers: {
+        Accept: '*/*',
+        'Content-Type': "text/html;charset=UTF-8"
+      }
+    };
+
+    // Create the HTTP request
+    const request = https.request(options, function (response) {
+      response.setEncoding('utf8');
+      let body="";
+      response.on('data', function (chunk) {
+        body = body + chunk.toString();  // aggregate data
+      })
+      response.on('end', () => {
+        console.log(body.indexOf('product_list' , 4000, ))
+        let position  = body.indexOf('product_list' , 4000, )
+        res.send(body.substring(position-100 , position + 1000 ))
+      })
+    });
+    request.write(dataPost);
+    request.end();
+
+  })
+
 })();
