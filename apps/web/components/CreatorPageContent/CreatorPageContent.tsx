@@ -1,5 +1,5 @@
 import React, {ChangeEvent, FormEventHandler, useRef, useState} from 'react'
-import {NarrowContainer, Search} from "~/components";
+import {FormLabel, NarrowContainer, Search} from "~/components";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -11,8 +11,8 @@ import type { Book } from "~/components/CreatorBookForm/types";
 import {
     SfButton,
     SfIconCancel,
-    SfIconClose,
-    SfIconSearch,
+    SfIconClose, SfIconCreditCard, SfIconGridView, SfIconPerson,
+    SfIconSearch, SfIconShoppingCart,
     SfInput,
     SfModal,
     useDisclosure,
@@ -48,6 +48,7 @@ export function CreatorPageContent() {
     // a local state to store the currently selected file.
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
     const [searchTitleValue, setSearchTitleValue] = useState('')
+    const [searchPublisherValue, setSearchPublisherValue] = useState('')
     const inputReference = useRef<HTMLInputElement>(null);
     const [searchValue, setSearchValue] = useState('978960')
     const [book, setBook] = useState<Book | undefined>(undefined)
@@ -59,20 +60,11 @@ export function CreatorPageContent() {
 
     const { refs } = useDropdown({  onClose: close });
 
-
-    const dataPost = {
-        "username": "evangelos.karakaxis@gmail.com",
-        "password": "testing123",
-        "year": "2023",
-        "month": "8",
-        "titles_per_page": "3"
-    };
-
     const handleTitleSubmit: FormEventHandler<HTMLFormElement> = async(event) => {
         event.preventDefault()
         await router.push({
             pathname: '/search',
-            query: { search: searchTitleValue, isbn: searchValue, data: JSON.stringify(book) }
+            query: { search: searchTitleValue, isbn: searchValue, publisher: searchPublisherValue, data: JSON.stringify(book) }
         })
     }
 
@@ -141,9 +133,10 @@ export function CreatorPageContent() {
                 if (responseBooks) {
                     setBook(responseBooks[0]);
                     setSearchTitleValue(responseBooks[0].Title)
+                    setSearchPublisherValue(responseBooks[0].Publisher)
                     setLoading(false)
                 } else {
-                    router.push(`/cart?isbn=${searchValue}`); // TODO prepei na phgainei sth forma createBook me kenh forma
+                    router.push(`/cart?isbn=${searchValue}`);
                 }
 
             })
@@ -153,6 +146,10 @@ export function CreatorPageContent() {
 
     }
 
+    const handlePublisherReset = () => {
+        setSearchPublisherValue('')
+        inputReference.current?.focus();
+    }
     const handleTitleReset = () => {
         setSearchTitleValue('')
         inputReference.current?.focus();
@@ -162,6 +159,14 @@ export function CreatorPageContent() {
         setSearchValue('');
         close();
         inputReference.current?.focus();
+    };
+    const handlePublisherChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const phrase2 = event.target.value;
+        if (phrase2) {
+            setSearchPublisherValue(phrase2);
+        } else {
+            handlePublisherReset();
+        }
     };
     const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const phrase2 = event.target.value;
@@ -181,7 +186,6 @@ export function CreatorPageContent() {
     };
 
     const classes = useStyles();
-
 
     return (
         <NarrowContainer>
@@ -248,7 +252,7 @@ export function CreatorPageContent() {
                             </SfButton>
                             <h3 id="search-modal-title"
                                 className="absolute left-6 top-4 font-bold typography-headline-4 mb-4">
-                                <div>Είναι αυτός ο τίτλος;</div>
+                                <div>Είναι αυτός τα στοιχεία;</div>
                             </h3>
                             <h3 id="search-modal-title"
                                 className="absolute left-6 top-10 font-bold typography-headline-4 mb-20">
@@ -261,26 +265,52 @@ export function CreatorPageContent() {
                             <form  onSubmit={handleTitleSubmit}
                                    ref={refs.setReference}
                                    className={classNames('relative')}>
-                                <SfInput
-                                    ref={inputReference}
-                                    value={searchTitleValue}
-                                    onChange={handleTitleChange}
-                                    aria-label="Search"
-                                    placeholder="Search"
-                                    slotPrefix={<SfIconSearch />}
-                                    slotSuffix={
-                                        !!searchTitleValue && (
-                                            <button
-                                                type="button"
-                                                onClick={handleTitleReset}
-                                                aria-label="Reset search"
-                                                className="flex rounded-md focus-visible:outline focus-visible:outline-offset"
-                                            >
-                                                <SfIconCancel />
-                                            </button>
-                                        )
-                                    }
-                                />
+                                <label>
+                                    <FormLabel className="grid justify-items-start pt-4">Τίτλος</FormLabel>
+                                    <SfInput
+                                        ref={inputReference}
+                                        value={searchTitleValue}
+                                        onChange={handleTitleChange}
+                                        aria-label="Search"
+                                        placeholder="Search"
+                                        slotPrefix={<SfIconSearch />}
+                                        slotSuffix={
+                                            !!searchTitleValue && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleTitleReset}
+                                                    aria-label="Reset search"
+                                                    className="flex rounded-md focus-visible:outline focus-visible:outline-offset"
+                                                >
+                                                    <SfIconCancel />
+                                                </button>
+                                            )
+                                        }
+                                    />
+                                </label>
+                                <label>
+                                    <FormLabel className="grid justify-items-start pt-4">Εκδόσεις</FormLabel>                                <SfInput
+                                        ref={inputReference}
+                                        value={searchPublisherValue}
+                                        onChange={handlePublisherChange}
+                                        label="Εκδόσεις"
+                                        aria-label=""
+                                        placeholder="Εκδόσεις"
+                                        slotPrefix={<SfIconCreditCard />}
+                                        slotSuffix={
+                                            !!searchPublisherValue && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handlePublisherReset}
+                                                    aria-label="Reset search"
+                                                    className="flex rounded-md focus-visible:outline focus-visible:outline-offset"
+                                                >
+                                                    <SfIconCancel />
+                                                </button>
+                                            )
+                                        }
+                                    />
+                                </label>
                                 <div>
                                     <SfButton type="submit" className="w-full md:w-1/6 mt-3 flex" >
                                         Αναζήτηση στη Βιβλιοθήκη μας

@@ -69,6 +69,23 @@ The sdk connector part is
 -------
 
 
+## Deployment In Production
+
+### Magento
+
+```
+cd <magento_dir>
+
+sudo -u www-data git stash && sudo -u www-data git pull && sudo -u www-data git stash pop 
+
+sudo -u www-data php8.1 ./bin/magento setup:upgrade      && sudo -u www-data  php8.1 ./bin/magento setup:di:compile   && sudo -u www-data  php8.1 ./bin/magento setup:static-content:deploy -f  && sudo -u www-data  php8.1 ./bin/magento indexer:reindex 
+
+```
+
+
+### Alokai Apps
+
+
 
 ## Features:
 

@@ -55,7 +55,8 @@ export default function SearchPage() {
 
 
   const dataPost2 = {
-    "title": query?.search
+    "title": query?.search,
+    "publisher": query?.publisher
   }
 
   useEffect(() => {

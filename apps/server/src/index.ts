@@ -29,6 +29,7 @@ import cors from "cors";
   app.post('/search-inside', (req, res) => {
     const data =  JSON.stringify(req.body)      //   {
                                                 //     title: "Ένας τάφος για τη Νέα Υόρκη",
+                                                //     publisher: "Πατάκης"
                                                 //   }
     const options = {
       host: "api.notia-evia.gr",
