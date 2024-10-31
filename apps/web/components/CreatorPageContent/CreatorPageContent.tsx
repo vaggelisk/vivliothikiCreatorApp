@@ -293,7 +293,6 @@ export function CreatorPageContent() {
                                         ref={inputReference}
                                         value={searchPublisherValue}
                                         onChange={handlePublisherChange}
-                                        label="Εκδόσεις"
                                         aria-label=""
                                         placeholder="Εκδόσεις"
                                         slotPrefix={<SfIconCreditCard />}
