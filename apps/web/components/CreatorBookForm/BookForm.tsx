@@ -217,7 +217,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
             </label>
             <label className="md:col-span-2">
                 <FormLabel>Συγγραφέας</FormLabel>
-                <SfInput name="writerName"
+                <SfInput name="WriterName"
                          onChange={handleChange}
                          defaultValue={book.WriterName}  />
             </label>
