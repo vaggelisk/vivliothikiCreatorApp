@@ -149,10 +149,7 @@ import cors from "cors";
   })
 
   app.post('/search-on-metabook', (req, res) => {
-    // const dataPost = JSON.stringify(req.body);
-    const dataPost = JSON.stringify({
-      "params": "query=%CE%B4%CE%B9%CE%BA%CE%B1%CE%B9%CF%89%CE%BC%CE%B1%20%CF%83%CF%84%CE%B7%CE%BD%20%CF%84%CE%B5%CE%BC%CF%80%CE%B5%CE%BB%CE%B9%CE%B1&hitsPerPage=10"
-    });
+    const dataPost = JSON.stringify(req.body);
 
     // let params = {
     //   title: encodeURI('ευβοια'),
