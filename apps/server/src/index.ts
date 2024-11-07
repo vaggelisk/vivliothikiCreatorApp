@@ -65,6 +65,7 @@ import cors from "cors";
                                                         // } )
     const options = {
       host: "api.notia-evia.gr",
+      // host: "yourdomain.gr",
       path: "/rest/V1/custom/create-book/new",
       method: "POST",
       headers: {
@@ -77,7 +78,6 @@ import cors from "cors";
       response.setEncoding('utf8');
       response.on('data', function (chunk) {
         let str = JSON.stringify(chunk)
-        console.log("body: " + chunk);
         res.send( chunk )
       });
 
@@ -148,34 +148,35 @@ import cors from "cors";
 
   })
 
-  app.post('/get-book-from-politeianet', (req, res) => {
-    const dataPost = JSON.stringify(req.body);
+  app.post('/search-on-metabook', (req, res) => {
+    // const dataPost = JSON.stringify(req.body);
+    const dataPost = JSON.stringify({
+      "params": "query=%CE%B4%CE%B9%CE%BA%CE%B1%CE%B9%CF%89%CE%BC%CE%B1%20%CF%83%CF%84%CE%B7%CE%BD%20%CF%84%CE%B5%CE%BC%CF%80%CE%B5%CE%BB%CE%B9%CE%B1&hitsPerPage=10"
+    });
 
-    let params = {
-      title: encodeURI('ευβοια'),
-    }
+    // let params = {
+    //   title: encodeURI('ευβοια'),
+    // }
 
     const options = {
-      host: "politeianet.gr",
-      path: `/index.php?option=com_virtuemart&Itemid=89&keyword=${params.title}`,                            // };
-      method: "GET",
+      host: "mfw8zwu0fg-3.algolianet.com",
+      path: `/1/indexes/prod_books/query?x-algolia-application-id=MFW8ZWU0FG&x-algolia-api-key=3c7ba3072f502593366031d90398b9db`,                            // };
+      method: "POST",
       headers: {
-        Accept: '*/*',
-        'Content-Type': "text/html;charset=UTF-8"
+        'Accept': '*/*',
+        'Content-Type': "application/json;charset=UTF-8"
       }
     };
 
     // Create the HTTP request
     const request = https.request(options, function (response) {
-      response.setEncoding('utf8');
       let body="";
       response.on('data', function (chunk) {
-        body = body + chunk.toString();  // aggregate data
+        body = body + chunk;  // aggregate data
+        // res.send(chunk)
       })
       response.on('end', () => {
-        console.log(body.indexOf('product_list' , 4000, ))
-        let position  = body.indexOf('product_list' , 4000, )
-        res.send(body.substring(position-100 , position + 1000 ))
+        res.send(body)
       })
     });
     request.write(dataPost);
