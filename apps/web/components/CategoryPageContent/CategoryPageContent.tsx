@@ -99,7 +99,7 @@ export function CategoryPageContent({
                                              }, index) => (
                                                  <ProductCard
                                                     key={id}
-                                                    name={name}
+                                                    name={name || ''}
                                                     ratingCount={review_count}
                                                     publisher={publisher}
                                                     author={author}

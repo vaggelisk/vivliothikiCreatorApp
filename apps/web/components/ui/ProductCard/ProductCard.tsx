@@ -32,7 +32,7 @@ export function ProductCard({
     baseURL: 'https://librarian-api.notia-evia.gr',
   });
 
-  const searchInternal = async (nameOfBook, publisherOfBook ) => {
+  const searchInternal = async (nameOfBook: string, publisherOfBook: string ) => {
     const dataPost3 =  {
       title: nameOfBook,
       publisher: publisherOfBook
@@ -55,18 +55,20 @@ export function ProductCard({
     })
   }
 
-  const submitSearchInternalOrBiblionet = async (nameOfBook, isbnOfBook, publisherOfBook? ) => {
-    await searchInternal(nameOfBook, publisherOfBook).then(  (resp)  => {
-      let comeFromMeta = true;
-      if (resp[0]) {
-        router.push(`/search?search=${nameOfBook}&comeFromMeta=${comeFromMeta}`)
-      } else {
-        searchBiblionet(nameOfBook, isbnOfBook)
-      }
-    })
+  const submitSearchInternalOrBiblionet = async (nameOfBook? : string, isbnOfBook? : string, publisherOfBook? : string ) => {
+    if (nameOfBook && publisherOfBook) {
+      await searchInternal(nameOfBook, publisherOfBook).then(  (resp)  => {
+        let comeFromMeta = true;
+        if (resp[0]) {
+          router.push(`/search?search=${nameOfBook}&comeFromMeta=${comeFromMeta}`)
+        } else {
+          isbnOfBook ? searchBiblionet(nameOfBook, isbnOfBook) : router.push(`/`);
+        }
+      })
+    }
   }
 
-  const searchBiblionet = async (searchValue, isbnOfBook, bookDetails?) => {
+  const searchBiblionet = async (searchValue : string, isbnOfBook: string, bookDetails? : string) => {
     const dataPost2 = {
       "username" : "evangelos.karakaxis@gmail.com",
       "password" : "testing123",
@@ -184,7 +186,7 @@ export function ProductCard({
         <span className="block pb-2 font-bold typography-text-sm" data-testid="product-card-vertical-price">
           isbn: {isbn?.substring(0,6)} {isbn?.substring(6,10)} {isbn?.substring(10,)}
         </span>
-        <SfButton type="button" onClick={() => submitSearchInternalOrBiblionet(name, isbn, publisher)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
+        <SfButton type="button" onClick={() => submitSearchInternalOrBiblionet(name!, isbn, publisher)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
           Προσθήκη
         </SfButton>
       </div>
