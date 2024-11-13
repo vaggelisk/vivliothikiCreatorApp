@@ -56,16 +56,25 @@ export function ProductCard({
   }
 
   const submitSearchInternalOrBiblionet = async (nameOfBook? : string, isbnOfBook? : string, publisherOfBook? : string ) => {
-    if (nameOfBook && publisherOfBook) {
-      await searchInternal(nameOfBook, publisherOfBook).then(  (resp)  => {
-        let comeFromMeta = true;
-        if (resp[0]) {
-          router.push(`/search?search=${nameOfBook}&comeFromMeta=${comeFromMeta}`)
-        } else {
-          isbnOfBook ? searchBiblionet(nameOfBook, isbnOfBook) : router.push(`/`);
-        }
+    if (!isbnOfBook) {
+      // noinspection TypeScriptValidateTypes
+      await router.push({
+        pathname: '/search-on-editors',
+        query: { search: nameOfBook, isbn: isbnOfBook, data: JSON.stringify({})}
       })
+    } else {
+      if (nameOfBook && publisherOfBook) {
+        await searchInternal(nameOfBook, publisherOfBook).then(  (resp)  => {
+          let comeFromMeta = true;
+          if (resp[0]) {
+            router.push(`/search?search=${nameOfBook}&comeFromMeta=${comeFromMeta}`)
+          } else {
+            isbnOfBook ? searchBiblionet(nameOfBook, isbnOfBook) : router.push(`/`);
+          }
+        })
+      }
     }
+
   }
 
   const searchBiblionet = async (searchValue : string, isbnOfBook: string, bookDetails? : string) => {
