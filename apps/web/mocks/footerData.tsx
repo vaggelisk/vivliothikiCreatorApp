@@ -154,13 +154,7 @@ export const contactOptions = [
     link: '/',
     details: ['openingHours-1', 'openingHours-2'],
     icon: <SfIconContactSupport size="lg" />,
-  },
-  {
-    key: 'phone',
-    link: '/',
-    details: ['openingHours-1', 'openingHours-2'],
-    icon: <SfIconCall size="lg" />,
-  },
+  }
 ];
 export const bottomLinks = [
   {

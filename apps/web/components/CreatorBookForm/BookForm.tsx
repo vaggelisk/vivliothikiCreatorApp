@@ -162,7 +162,6 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
             // customer_id: '5',                 // avto einai gia to local yourdomain.gr
             Summary: summary
         }))
-        console.log('Form data submitted successfully:', book);
         axiosInstance.post('/create-book', book)
             .then((response) => {
                     if (response.status >= 400) {
@@ -187,18 +186,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
             onSubmit={handleSave}
             ref={formReference}
         >
-            <div className="md:col-span-2 flex justify-start gap-4">
-                <SfButton type="reset" onClick={handleClearAll} className="max-md:w-1/2" variant="secondary">
-                    Σβήσιμο Όλων
-                </SfButton>
-                <SfButton type="submit" className="w-1/2 md:w-1/6" disabled={isCartUpdateLoading}>
-                    {isCartUpdateLoading ? (
-                        <SfLoaderCircular className="flex justify-center items-center" size="sm" />
-                    ) : (
-                        <span>Αποθήκευση Βιβλίου </span>
-                    )}
-                </SfButton>
-            </div>
+
             <div className="col-span-2">
             <label >
                 <FormLabel >Τίτλος</FormLabel>
@@ -256,32 +244,40 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                 <TextareaAutosize minRows="3"  className="w-full"  maxRows="10" name="summary"  defaultValue={summary}    />
             </label>
 
-
-
-
-
-        {isOpen && (
-            <Overlay visible={isOpen}>
-                <SfModal
-                    as="section"
-                    role="dialog"
-                    className=" overflow-auto md:w-[600px] md:h-fit"
-                    open={isOpen}
-                    onClose={close}
-                    aria-labelledby="contact-modal-title"
-                >
-                    <header>
-                        <SfButton square variant="tertiary" className="absolute right-2 top-2" onClick={close}>
-                            <SfIconClose />
-                        </SfButton>
-                        <h3 id="contact-modal-title" className="text-neutral-900 text-lg md:text-2xl font-bold mb-4">
-                            Η εισαγωγή του βιβλίου έγινε με επιτυχία
-                        </h3>
-                    </header>
-                    <div className="text-neutral-900 text-lg">σε λίγα δευτερόλεπτα θα επιστρέψετε στην Αρχική</div>
-                </SfModal>
-            </Overlay>
-        )}
+            <div className="md:col-span-2 flex justify-start gap-4">
+                <SfButton type="reset" onClick={handleClearAll} className="max-md:w-1/2" variant="secondary">
+                    Σβήσιμο Όλων
+                </SfButton>
+                <SfButton type="submit" className="w-1/2 md:w-1/6" disabled={isCartUpdateLoading}>
+                    {isCartUpdateLoading ? (
+                        <SfLoaderCircular className="flex justify-center items-center" size="sm" />
+                    ) : (
+                        <span>Αποθήκευση Βιβλίου </span>
+                    )}
+                </SfButton>
+            </div>
+            {isOpen && (
+                <Overlay visible={isOpen}>
+                    <SfModal
+                        as="section"
+                        role="dialog"
+                        className=" overflow-auto md:w-[600px] md:h-fit"
+                        open={isOpen}
+                        onClose={close}
+                        aria-labelledby="contact-modal-title"
+                    >
+                        <header>
+                            <SfButton square variant="tertiary" className="absolute right-2 top-2" onClick={close}>
+                                <SfIconClose />
+                            </SfButton>
+                            <h3 id="contact-modal-title" className="text-neutral-900 text-lg md:text-2xl font-bold mb-4">
+                                Η εισαγωγή του βιβλίου έγινε με επιτυχία
+                            </h3>
+                        </header>
+                        <div className="text-neutral-900 text-lg">σε λίγα δευτερόλεπτα θα επιστρέψετε στην Αρχική</div>
+                    </SfModal>
+                </Overlay>
+            )}
         </form>
 
     );
