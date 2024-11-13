@@ -6,8 +6,7 @@ import {NarrowContainer, Pagination, ProductCard, CategorySidebar, Search, Creat
 import type { CategoryPageContentProps } from '~/components';
 import {useRouter} from "next/router";
 import {BookForm} from "~/components/CreatorBookForm/BookForm";
-import  useQueryPostList  from "~/hooks/useQueryPostList"
-import classNames from "classnames";
+import logoDraftImage from '~/public/images/logoDraft.svg'
 
 
 const CategoryEmptyState = dynamic(() => import('~/components/CategoryEmptyState'));
@@ -15,6 +14,7 @@ const CategoryEmptyState = dynamic(() => import('~/components/CategoryEmptyState
 export function CategoryPageContent({
   title,
   comeFromCreator,
+  comeFromMeta,
   currentScreen,
   bookTitle,
   isbn,
@@ -33,7 +33,6 @@ export function CategoryPageContent({
   const maxVisiblePages = isWideScreen ? 5 : 1;
 
   const save = () => {
-    console.log('zhtw h cooooore')
     return 'core'
   }
 
@@ -54,7 +53,7 @@ export function CategoryPageContent({
           <div className="flex-1">
             {(route=='/search') ? (
               <span>
-              {(products.length > 0) ? (
+              {(products.length > 0 || comeFromMeta) ? (
                 <section
                     className="grid grid-cols-1 2xs:grid-cols-2 gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4 mb-10 md:mb-5"
                     data-testid="category-grid"
@@ -85,19 +84,40 @@ export function CategoryPageContent({
                       isbnOfBook={isbn}
                       bookDetails={book}
                       onSave={save} />
-                </div>) : (
-                <div>
-                  <CategoryEmptyState />
-                </div>)
+                </div>) :
+                  (route=='/search-on-meta') ? (
+                           <section
+                                    className="grid grid-cols-1 2xs:grid-cols-3 gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-5 3xl:grid-cols-6 mb-10 md:mb-5"
+                                    data-testid="category-grid"
+                                >
+                                  {products
+                                      .map(({
+                                               id, name, review_count, isbn,
+                                               publisher, author,
+                                               rating_summary, price_range, thumbnail,
+                                               slug
+                                             }, index) => (
+                                                 <ProductCard
+                                                    key={id}
+                                                    name={name}
+                                                    ratingCount={review_count}
+                                                    publisher={publisher}
+                                                    author={author}
+                                                    isbn={isbn}
+                                                    // imageUrl="https://production-metabook-covers-4.ams3.digitaloceanspaces.com/files/05/6f/7cf4ffa2-05b4-4b6e-a033-ad318b405579.jpg"
+                                                    imageUrl={logoDraftImage}
+                                                    imageAlt={thumbnail?.alt}
+                                                    // slug={slug}
+                                                    priority={index === 0}
+                                                />
+
+                                  ))}
+                                </section>
+                  ) :
+                    (<div>
+                      <CategoryEmptyState />
+                    </div>)
               }
-            {totalProducts > itemsPerPage && (
-              <Pagination
-                currentPage={1}
-                totalItems={totalProducts}
-                pageSize={itemsPerPage}
-                maxVisiblePages={maxVisiblePages}
-              />
-            )}
           </div>
         </div>
       </div>

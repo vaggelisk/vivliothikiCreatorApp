@@ -80,7 +80,8 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     const [loading, setLoading] = useState(true);
     const [loading2, setLoading2] = useState(true);
     const axiosInstance = axios.create({
-        baseURL: 'https://librarian-api.notia-evia.gr',
+        baseURL: 'https://librarian-api.notia-evia.gr',       //   avto einai gia to server
+        // baseURL: 'http://localhost:4000',                  //   avto einai gia to local instance
     });
     const [book, setBook] = useState<Book>( JSON.parse( JSON.stringify( bookDetails )))
 
@@ -157,7 +158,8 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     const handleSave: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
         setBook(Object.assign(book, {
-            customer_id: '2',
+            customer_id: '2',                    // avto einai gia to api.noti-evia.gr
+            // customer_id: '5',                 // avto einai gia to local yourdomain.gr
             Summary: summary
         }))
         console.log('Form data submitted successfully:', book);
@@ -168,18 +170,14 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                     }
                     if (response.status == 200) {
                         open()
-
-                        let count = 0;
                         //Implementing the setInterval method
                         setTimeout(() => {
                             router.push(`/`)
                         }, 3000);
-
                     }
                 }
             )
             .catch((error) => setError(error))
-
     };
 
     return (
@@ -189,8 +187,6 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
             onSubmit={handleSave}
             ref={formReference}
         >
-
-
             <div className="md:col-span-2 flex justify-start gap-4">
                 <SfButton type="reset" onClick={handleClearAll} className="max-md:w-1/2" variant="secondary">
                     Σβήσιμο Όλων

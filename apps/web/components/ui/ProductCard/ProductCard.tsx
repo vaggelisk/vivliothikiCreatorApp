@@ -1,9 +1,13 @@
 import Image from 'next/image';
-import Link from 'next/link';
-import { SfButton, SfRating, SfCounter, SfLink, SfIconShoppingCart } from '@storefront-ui/react';
+import {SfButton, SfIconShoppingCart} from '@storefront-ui/react';
 import classNames from 'classnames';
-import { useTranslation } from 'next-i18next';
-import type { ProductCardProps } from '~/components';
+import {useTranslation} from 'next-i18next';
+import type {ProductCardProps} from '~/components';
+import {useRouter} from 'next/router';
+import axios from "axios";
+import type {Book} from "~/components/CreatorBookForm/types";
+import {useState} from "react";
+
 
 export function ProductCard({
   name,
@@ -12,6 +16,9 @@ export function ProductCard({
   imageAlt,
   price,
   rating,
+  isbn,
+  publisher,
+  author,
   ratingCount,
   slug,
   className,
@@ -19,6 +26,130 @@ export function ProductCard({
   ...attributes
 }: ProductCardProps) {
   const { t } = useTranslation();
+  const router = useRouter();
+  let [book, setBook] = useState<Book | undefined>(undefined)
+  const axiosInstance = axios.create({
+    baseURL: 'https://librarian-api.notia-evia.gr',
+  });
+
+  const searchInternal = async (nameOfBook, publisherOfBook ) => {
+    const dataPost3 =  {
+      title: nameOfBook,
+      publisher: publisherOfBook
+    }
+    return await axiosInstance.post(
+        'search-inside',
+        dataPost3,
+        {
+          headers: {
+            "Content-Type": 'application/json',
+          }
+        }
+    ).then((response) => {
+      return response.data
+    }).finally(() => {
+      // return response
+    }).catch((error) => {
+      console.log(error)
+      router.push('/')
+    })
+  }
+
+  const submitSearchInternalOrBiblionet = async (nameOfBook, isbnOfBook, publisherOfBook? ) => {
+    await searchInternal(nameOfBook, publisherOfBook).then(  (resp)  => {
+      let comeFromMeta = true;
+      if (resp[0]) {
+        router.push(`/search?search=${nameOfBook}&comeFromMeta=${comeFromMeta}`)
+      } else {
+        searchBiblionet(nameOfBook, isbnOfBook)
+      }
+    })
+  }
+
+  const searchBiblionet = async (searchValue, isbnOfBook, bookDetails?) => {
+    const dataPost2 = {
+      "username" : "evangelos.karakaxis@gmail.com",
+      "password" : "testing123",
+      "isbn": isbnOfBook
+    }
+    axiosInstance.post(
+        '/get-book-from-biblionet',
+        dataPost2,
+        { headers: {
+            "Content-Type": 'application/json',
+          }},
+    ).then((response) => {
+      if (response.data.error) {
+        book = {
+          Title: name,
+          WriterName: author,
+          Publisher: publisher
+        } as Book;
+      } else {
+        if (response.data[0]) {
+          let responseBooks: Book[] = response.data[0]?.map((responseBooks: any) => {
+            return {
+              TitlesID: responseBooks.TitlesID,
+              CoverImage: responseBooks.CoverImage,
+              Title: responseBooks.Title,
+              Subtitle: responseBooks.Subtitle,
+              ISBN: responseBooks.ISBN,
+              PublisherID: responseBooks.PublisherID,
+              Publisher: responseBooks.Publisher,
+              WriterID: responseBooks.WriterID,
+              Writer: responseBooks.Writer,
+              WriterName: responseBooks.WriterName,
+              FirstPublishDate: responseBooks.FirstPublishDate,
+              CurrentPublishDate: responseBooks.CurrentPublishDate,
+              PlaceID: responseBooks.PlaceID,
+              Place: responseBooks.Place,
+              EditionNo: responseBooks.EditionNo,
+              Cover: responseBooks.Cover,
+              Dimensions: responseBooks.Dimensions,
+              PageNo: responseBooks.PageNo,
+              Availability: responseBooks.Availability,
+              Price: responseBooks.Price,
+              VAT: responseBooks.VAT,
+              Weight: responseBooks.Weight,
+              AgeFrom: responseBooks.AgeFrom,
+              AgeTo: responseBooks.AgeTo,
+              // Summary: responseBooks.Summary,
+              LanguageID: responseBooks.LanguageID,
+              Language: responseBooks.Language,
+              LanguageOriginalID: responseBooks.LanguageOriginalID,
+              LanguageOriginal: responseBooks.LanguageOriginal,
+              LanguageTranslatedFromID: responseBooks.LanguageTranslatedFromID,
+              LanguageTranslatedFrom: responseBooks.LanguageTranslatedFrom,
+              Series: responseBooks.Series,
+              MultiVolumeTitle: responseBooks.MultiVolumeTitle,
+              VolumeNo: responseBooks.VolumeNo,
+              VolumeCount: responseBooks.VolumeCount,
+              Specifications: responseBooks.Specifications,
+              Comments: responseBooks.Comments,
+              CategoryID: responseBooks.CategoryID,
+              Category: responseBooks.Category,
+            }
+          })
+          if (responseBooks) {
+            book = responseBooks[0] as Book;
+          } else {
+            router.push(`/`);
+          }
+        }
+      }
+    }
+    ).catch((error) => {
+      console.log(error);
+    }).finally(() => {
+      router.push({
+          pathname: '/search-on-editors',
+          query: { search: searchValue, isbn: isbnOfBook, data: JSON.stringify(book)}
+        })
+    })
+
+
+  }
+
 
   return (
     <div
@@ -27,7 +158,7 @@ export function ProductCard({
       {...attributes}
     >
       <div className="relative">
-        <SfLink href={`/product/${slug}`} as={Link} className="relative block w-full pb-[100%]">
+        <span  className="relative block w-full pb-[100%]">
           <Image
             src={imageUrl ?? ''}
             alt={imageAlt || 'primary image'}
@@ -35,27 +166,26 @@ export function ProductCard({
             data-testid="image-slot"
             fill
             sizes="(max-width: 768px) 50vw, 190px"
-            priority={priority}
           />
-        </SfLink>
+        </span>
       </div>
       <div className="p-2 border-t border-neutral-200 typography-text-sm">
-        <SfLink href={`/product/${slug}`} as={Link} variant="secondary" className="no-underline">
+        <span  className="no-underline">
           {name}
-        </SfLink>
-        <div className="flex items-center pt-1">
-          <SfRating size="xs" value={rating} max={5} />
+        </span>
 
-          <SfLink href="#" variant="secondary" as={Link} className="ml-1 no-underline">
-            <SfCounter size="xs">{ratingCount}</SfCounter>
-          </SfLink>
-        </div>
         <p className="block py-2 font-normal typography-text-xs text-neutral-700 text-justify">{description}</p>
         <span className="block pb-2 font-bold typography-text-sm" data-testid="product-card-vertical-price">
-          ${price}
+          συγγραφέας: {author}
         </span>
-        <SfButton type="button" size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
-          {t('addToCartShort')}
+        <span className="block pb-2 font-bold typography-text-sm" data-testid="product-card-vertical-price">
+          εκδόσεις: {publisher}
+        </span>
+        <span className="block pb-2 font-bold typography-text-sm" data-testid="product-card-vertical-price">
+          isbn: {isbn?.substring(0,6)} {isbn?.substring(6,10)} {isbn?.substring(10,)}
+        </span>
+        <SfButton type="button" onClick={() => submitSearchInternalOrBiblionet(name, isbn, publisher)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
+          Προσθήκη
         </SfButton>
       </div>
     </div>

@@ -27,21 +27,23 @@ export function DefaultLayout({ children, breadcrumbs = [] }: LayoutPropsType): 
 
   return (
     <>
-      <NavbarTop filled>
-          <div className="flex text-white ">αυτοοργανωμένη βιβλιοθήκη</div>
-          <Search outerComp={outerCompon} className="hidden md:block flex-1" />
-      </NavbarTop>
-      {breadcrumbs?.length > 0 && (
-        <NarrowContainer>
-          <div className="p-4 md:px-0">
-            <Breadcrumbs breadcrumbs={breadcrumbs} />
-          </div>
-        </NarrowContainer>
-      )}
-      <main>{children}</main>
-      <BottomNav />
-      <ScrollToTopButton />
-      <Footer className="mb-[58px] md:mb-0" />
+        <div className="flex flex-col h-screen justify-between">
+          <NavbarTop filled>
+              <div className="flex text-white ">αυτοοργανωμένη βιβλιοθήκη</div>
+              <Search outerComp={outerCompon} className="hidden md:block flex-1" />
+          </NavbarTop>
+          {breadcrumbs?.length > 0 && (
+            <NarrowContainer>
+              <div className="p-4 md:px-0">
+                <Breadcrumbs breadcrumbs={breadcrumbs} />
+              </div>
+            </NarrowContainer>
+          )}
+          <main>{children}</main>
+          <BottomNav />
+          <ScrollToTopButton />
+          <Footer className="mb-[58px] md:mb-0" />
+        </div>
     </>
   );
 }

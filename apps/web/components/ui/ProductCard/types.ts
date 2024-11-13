@@ -9,6 +9,9 @@ export type ProductCardProps = {
   ratingCount?: number;
   price?: number;
   slug?: string;
+  isbn?: string;
+  publisher?: string;
+  author?: string;
   className?: string;
   priority?: boolean;
 };

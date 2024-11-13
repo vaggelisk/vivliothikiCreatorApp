@@ -62,6 +62,7 @@
     "@vue-storefront/magento-sdk": "^2.1.0",
     "@vue-storefront/middleware": "^3.8.0",
     "cors": "^2.8.5",
+    "lodash": "^4.17.21",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.27.0"
   }

@@ -1,5 +1,5 @@
 const { i18n } = require('./next-i18next.config');
-const withPwa = require('next-pwa')({
+const   withPwa = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
   publicExcludes: ['!**/*', '*.ico', 'manifest.json'],
@@ -22,16 +22,18 @@ const nextConfig = {
     dirs: ['components', 'hooks', 'layouts', 'pages', 'sdk', 'utils'],
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'api.notia-evia.gr',
-        port: '',
-        pathname: '/media/catalog/product/**',
-      },
-    ],
+    domains: ['production-metabook-covers-4.ams3.digitaloceanspaces.com'],
+    // remotePatterns: [
+    //   {
+    //     protocol: 'https',
+    //     hostname: 'production-metabook-covers-4.ams3.digitaloceanspaces.com',
+    //     port: '',
+    //     pathname: '/files/05/6f/**',
+    //   },
+    // ],
     imageSizes: [64, 96, 128, 160, 256, 384],
     deviceSizes: [360, 640, 750],
+    // formats: ["image/avif",  "image/webp"],
   },
   transpilePackages: ['@storefront-ui/react'],
   i18n,

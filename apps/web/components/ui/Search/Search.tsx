@@ -16,9 +16,7 @@ import type { SearchProps } from '~/components';
 export function Search({ className, outerComp, bookDetails, isbnOfBook, titleOfBook, curScreen }: SearchProps) {
   const inputReference = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState( titleOfBook ? titleOfBook : '');
-  // const [modalName, setModalName] = useState( className ? className.modalOf : '');
   const [currentScreen] = useState(curScreen ? curScreen : '');
-  // const [outerComp, setOuterComp] = useState(className.outerComp);
   const router = useRouter();
   const { isOpen, close, open } = useDisclosure({ initialValue: true });
   const { refs } = useDropdown({  onClose: close, });
@@ -33,6 +31,8 @@ export function Search({ className, outerComp, bookDetails, isbnOfBook, titleOfB
         pathname: '/search-on-editors',
         query: { search: searchValue, isbn: isbnOfBook, data: JSON.stringify(bookDetails)}
       })
+    } else if (currentScreen==="/cart") {
+      await router.push(`/search-on-meta?search=${searchValue}`)
     } else {
       await router.push(`/search?search=${searchValue}`);
     }
