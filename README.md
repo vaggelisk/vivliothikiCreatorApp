@@ -92,15 +92,20 @@ cd /var/www/librarian.notia-evia.gr/vivliothikiCreatorApp
 
 git pull
 
-cd apps/web
-
-/home/kantro/.nvm/versions/node/v18.17.1/bin/node      /var/www/librarian.notia-evia.gr/vivliothikiCreatorApp/apps/web/node_modules/.bin/next  build
+npx yarn build
 
 sudo systemctl restart librarian-api.service
 
 sudo systemctl restart librarian.service                                                                
 
 ```
+
+
+In difficult times may  also below could help after `git pull`
+
+
+     # cd apps/web && /home/kantro/.nvm/versions/node/v18.17.1/bin/node   /var/www/librarian.notia-evia.gr/vivliothikiCreatorApp/apps/web/node_modules/.bin/next  build
+
 
 
 ## Features:

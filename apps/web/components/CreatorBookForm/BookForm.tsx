@@ -4,6 +4,8 @@ import {
     SfCheckbox,
     SfIconClose,
     SfInput,
+    SfIconCheckCircle,
+    SfIconCancel,
     SfLoaderCircular,
     SfModal,
     SfSelect,
@@ -69,6 +71,7 @@ const emptyBook: Book = {
 export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOfBook, bookDetails }: BookFormProps): JSX.Element {
     const { t } = useTranslation('address');
     const isCartUpdateLoading = false;
+    let errorInResponse = true;
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
     const router = useRouter();
 
@@ -165,14 +168,21 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
         axiosInstance.post('/create-book', book)
             .then((response) => {
                     if (response.status >= 400) {
+                        errorInResponse = true
                         throw new Error("server error");
                     }
                     if (response.status == 200) {
-                        open()
-                        //Implementing the setInterval method
-                        setTimeout(() => {
-                            router.push(`/`)
-                        }, 3000);
+                        let resp = JSON.parse(response.data)
+                        if (!resp.success) {
+                            errorInResponse = true
+                            open()
+                        } else {
+                            open()
+                            //Implementing the setInterval method
+                            setTimeout(() => {
+                                router.push(`/`)
+                            }, 3000);
+                        }
                     }
                 }
             )
@@ -252,7 +262,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                     {isCartUpdateLoading ? (
                         <SfLoaderCircular className="flex justify-center items-center" size="sm" />
                     ) : (
-                        <span>Αποθήκευση Βιβλίου </span>
+                        <span>Αποθήκευση Βιβλίου</span>
                     )}
                 </SfButton>
             </div>
@@ -270,15 +280,27 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                             <SfButton square variant="tertiary" className="absolute right-2 top-2" onClick={close}>
                                 <SfIconClose />
                             </SfButton>
-                            <h3 id="contact-modal-title" className="text-neutral-900 text-lg md:text-2xl font-bold mb-4">
-                                Η εισαγωγή του βιβλίου έγινε με επιτυχία
-                            </h3>
+                            {(errorInResponse) ?
+                                <h3 id="contact-modal-title"
+                                    className="text-neutral-900 text-lg md:text-2xl font-bold mb-4">
+                                    <SfIconCancel  className="mr-4" color='red' />
+                                        Η εισαγωγή του βιβλίου απέτυχε
+                                </h3> :
+                                <h3 id="contact-modal-title"
+                                    className="text-neutral-900 text-lg md:text-2xl font-bold mb-4">
+                                    <SfIconCheckCircle className="mr-4" color='green' />
+                                        Η εισαγωγή του βιβλίου έγινε με επιτυχία
+                                </h3>
+                            }
                         </header>
-                        <div className="text-neutral-900 text-lg">σε λίγα δευτερόλεπτα θα επιστρέψετε στην Αρχική</div>
+                        {(errorInResponse) ?
+                            <div className="text-neutral-900 text-lg">
+                                Το πιθανότερο να φταίει ο πολύ  μεγάλος τίτλος ή εκδότης</div> :
+                            <div className="text-neutral-900 text-lg">σε λίγα δευτερόλεπτα θα επιστρέψετε στην Αρχική</div>
+                        }
                     </SfModal>
                 </Overlay>
             )}
         </form>
-
     );
 }
