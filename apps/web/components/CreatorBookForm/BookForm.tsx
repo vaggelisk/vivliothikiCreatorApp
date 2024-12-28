@@ -71,12 +71,13 @@ const emptyBook: Book = {
 export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOfBook, bookDetails }: BookFormProps): JSX.Element {
     const { t } = useTranslation('address');
     const isCartUpdateLoading = false;
-    let errorInResponse = false;
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
     const router = useRouter();
 
 
     const formReference = useRef<HTMLFormElement>(null);
+    let errorInResponse = useRef(false)
+
 
     const [error, setError] = useState(null);
     const [summary, setSummary ] = useState('');
@@ -168,15 +169,16 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
         axiosInstance.post('/create-book', book)
             .then((response) => {
                     if (response.status >= 400) {
-                        errorInResponse = true
+                        errorInResponse.current = true
                         throw new Error("server error");
                     }
                     if (response.status == 200) {
                         let resp = JSON.parse(response.data)
                         if (!resp.success) {
-                            errorInResponse = true
+                            errorInResponse.current = true
                             open()
                         } else {
+                            errorInResponse.current = false
                             open()
                             //Implementing the setInterval method
                             setTimeout(() => {
@@ -280,7 +282,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                             <SfButton square variant="tertiary" className="absolute right-2 top-2" onClick={close}>
                                 <SfIconClose />
                             </SfButton>
-                            {(errorInResponse) ?
+                            {errorInResponse.current ?
                                 <h3 id="contact-modal-title"
                                     className="text-neutral-900 text-lg md:text-2xl font-bold mb-4">
                                     <SfIconCancel  className="mr-4" color='red' />
@@ -292,11 +294,13 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                                         Η εισαγωγή του βιβλίου έγινε με επιτυχία
                                 </h3>
                             }
+                            <h4>kantro - {errorInResponse.current}</h4>
                         </header>
-                        {(errorInResponse) ?
+                        {(errorInResponse.current) ?
                             <div className="text-neutral-900 text-lg">
                                 Το πιθανότερο να φταίει ο πολύ  μεγάλος τίτλος ή εκδότης</div> :
-                            <div className="text-neutral-900 text-lg">σε λίγα δευτερόλεπτα θα επιστρέψετε στην Αρχική</div>
+                            <div className="text-neutral-900 text-lg">
+                                σε λίγα δευτερόλεπτα θα επιστρέψετε στην Αρχική</div>
                         }
                     </SfModal>
                 </Overlay>
