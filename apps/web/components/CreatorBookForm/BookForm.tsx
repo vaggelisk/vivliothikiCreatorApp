@@ -71,7 +71,7 @@ const emptyBook: Book = {
 export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOfBook, bookDetails }: BookFormProps): JSX.Element {
     const { t } = useTranslation('address');
     const isCartUpdateLoading = false;
-    let errorInResponse = true;
+    let errorInResponse = false;
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
     const router = useRouter();
 
