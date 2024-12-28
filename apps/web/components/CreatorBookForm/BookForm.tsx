@@ -294,7 +294,6 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                                         Η εισαγωγή του βιβλίου έγινε με επιτυχία
                                 </h3>
                             }
-                            <h4>kantro - {errorInResponse.current}</h4>
                         </header>
                         {(errorInResponse.current) ?
                             <div className="text-neutral-900 text-lg">
