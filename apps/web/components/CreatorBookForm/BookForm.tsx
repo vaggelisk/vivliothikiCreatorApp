@@ -19,6 +19,8 @@ import type { Book } from "~/components/CreatorBookForm/types";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import {ContactInformationForm} from "~/components/ContactInformation/ContactInformationForm";
 import {useRouter} from "next/router";
+import {sortingOptions} from "~/mocks";
+import {useProductAttribute} from "~/hooks";
 
 
 const emptyBook: Book = {
@@ -89,6 +91,15 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     });
     const [book, setBook] = useState<Book>( JSON.parse( JSON.stringify( bookDetails )))
 
+    const contributorOptions = [
+        { "value": "214", "label": "Βιβλιοθήκη" },
+        { "value": "215", "label": "Κάντρο" },
+        { "value": "216", "label": "Διάκενο" },
+        { "value": "217", "label": "Αντώνης Λαρισα" },
+        { "value": "218", "label": "Αβδελάς" }
+    ];
+
+    const [selectedContributor, setSelectedContributor] = useState(contributorOptions[0].value);
 
     const dataPost2 = {
         "username" : "evangelos.karakaxis@gmail.com",
@@ -158,13 +169,13 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
         setBook({ ...book, [e.target.name]: e.target.value });
     };
 
-
     const handleSave: FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
         setBook(Object.assign(book, {
             customer_id: '2',                    // avto einai gia to api.noti-evia.gr
             // customer_id: '5',                 // avto einai gia to local yourdomain.gr
-            Summary: summary
+            Summary: summary,
+            contributor: Number(selectedContributor),
         }))
         axiosInstance.post('/create-book', book)
             .then((response) => {
@@ -248,6 +259,19 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                 <SfInput name="isbn2"
                          onChange={handleChange}
                          defaultValue={isbnOfBook}  />
+            </label>
+            <label className="col-span-2">
+                <span className="pb-1 text-sm font-medium text-neutral-900 font-body">Contributor</span>
+                <SfSelect aria-label={t('contributor')}
+                          value={selectedContributor}
+                          onChange={e => setSelectedContributor(e.target.value)}
+                >
+                    {contributorOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </SfSelect>
             </label>
             <label className="col-span-2 ">
                 <div className="col-span-2 pb-4">
