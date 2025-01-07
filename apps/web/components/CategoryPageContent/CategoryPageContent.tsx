@@ -86,33 +86,31 @@ export function CategoryPageContent({
                       onSave={save} />
                 </div>) :
                   (route=='/search-on-meta') ? (
-                           <section
-                                    className="grid grid-cols-1 2xs:grid-cols-3 gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-5 3xl:grid-cols-6 mb-10 md:mb-5"
-                                    data-testid="category-grid"
-                                >
-                                  {products
-                                      .map(({
-                                               id, name, review_count, isbn,
-                                               publisher, author,
-                                               rating_summary, price_range, thumbnail,
-                                               slug
-                                             }, index) => (
-                                                 <ProductCard
-                                                    key={id}
-                                                    name={name || ''}
-                                                    ratingCount={review_count}
-                                                    publisher={publisher}
-                                                    author={author}
-                                                    isbn={isbn}
-                                                    // imageUrl="https://production-metabook-covers-4.ams3.digitaloceanspaces.com/files/05/6f/7cf4ffa2-05b4-4b6e-a033-ad318b405579.jpg"
-                                                    imageUrl={logoDraftImage}
-                                                    imageAlt={thumbnail?.alt}
-                                                    // slug={slug}
-                                                    priority={index === 0}
-                                                />
-
-                                  ))}
-                                </section>
+                     <section
+                          className="grid grid-cols-1 2xs:grid-cols-3 gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-5 3xl:grid-cols-6 mb-10 md:mb-5"
+                          data-testid="category-grid">
+                        {products
+                          .map(({
+                               id, name, review_count, isbn,
+                               publisher, author,
+                               rating_summary, price_range, thumbnail,
+                               slug
+                          }, index) => (
+                            <ProductCard
+                              key={id}
+                              name={name || ''}
+                              ratingCount={review_count}
+                              publisher={publisher}
+                              author={author}
+                              isbn={isbn}
+                              // imageUrl="https://production-metabook-covers-4.ams3.digitaloceanspaces.com/files/05/6f/7cf4ffa2-05b4-4b6e-a033-ad318b405579.jpg"
+                              imageUrl={logoDraftImage}
+                              imageAlt={thumbnail?.alt}
+                              // slug={slug}
+                              priority={index === 0}
+                            />
+                        ))}
+                      </section>
                   ) :
                     (<div>
                       <CategoryEmptyState />
