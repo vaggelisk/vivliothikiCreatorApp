@@ -41,8 +41,8 @@ export default function SearchOnEditorsPage() {
                 title={categoryTitle}
                 bookTitle={query.search ?  query.search.toString() : ''}
                 isbn={query.isbn ? query.isbn.toString() : ''}
-                bookAuthor={query.author ? query.author : '' }
-                bookPublisher={query.publisher ? query.publisher : '' }
+                bookAuthor={query.author ? query.author.toString() : '' }
+                bookPublisher={query.publisher ? query.publisher.toString() : '' }
                 products={products ? products : Array()}
                 book={query.data ? JSON.parse(query?.data.toString()) : {}}
                 totalProducts={ Number(pagination.totalResults)}

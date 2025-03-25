@@ -20,6 +20,8 @@ export interface CategoryPageContentProps extends PropsWithChildren {
   comeFromMeta?: boolean;
   currentScreen?: string;
   bookTitle?: string;
+  bookAuthor?: string;
+  bookPublisher?: string;
   isbn?: string;
   book?: [];
   products: SfProductCatalogItemNew[];

@@ -150,10 +150,10 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
                 .finally(() => setLoading(false));
         }
         else {
-            book.ISBN = isbnOfBook
-            book.Title = titleOfBook
-            book.WriterName = authorOfBook
-            book.Publisher = publisherOfBook
+            book.ISBN = isbnOfBook ?? ''
+            book.Title = titleOfBook ?? ''
+            book.WriterName = authorOfBook ?? ''
+            book.Publisher = publisherOfBook ?? ''
         }
 
     }, []
