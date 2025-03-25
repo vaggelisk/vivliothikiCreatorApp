@@ -17,11 +17,6 @@ export const getServerSideProps = createGetServerSideProps({ i18nNamespaces: ['c
     let isbn = context.query.isbn;
     const products = await prefetchProducts(context, search ? search.toString() : '');
 
-    // if (!products) {
-    //     return {
-    //         notFound: true,
-    //     };
-    // }
 
     return { props: {} };
 });
@@ -40,14 +35,14 @@ export default function SearchOnEditorsPage() {
     const { products, pagination, facets } = productsCatalog;
     const categoryTitle = t('resultsFor', { phrase: query?.search });
 
-
-
     return (
         <DefaultLayout >
             <CategoryPageContent
                 title={categoryTitle}
                 bookTitle={query.search ?  query.search.toString() : ''}
                 isbn={query.isbn ? query.isbn.toString() : ''}
+                bookAuthor={query.author ? query.author : '' }
+                bookPublisher={query.publisher ? query.publisher : '' }
                 products={products ? products : Array()}
                 book={query.data ? JSON.parse(query?.data.toString()) : {}}
                 totalProducts={ Number(pagination.totalResults)}

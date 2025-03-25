@@ -23,6 +23,8 @@ export type BookFormProps = {
   type?: 'book';
   titleOfBook?: string;
   isbnOfBook?: string;
+  authorOfBook?: string;
+  publisherOfBook?: string;
   bookDetails?: object;
   savedBook?: object;
   onSave?: () => string;

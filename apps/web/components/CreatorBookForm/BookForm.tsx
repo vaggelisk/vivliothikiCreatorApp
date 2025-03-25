@@ -70,7 +70,7 @@ const emptyBook: Book = {
     SubjectOrder: ''
 };
 
-export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOfBook, bookDetails }: BookFormProps): JSX.Element {
+export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOfBook, authorOfBook, publisherOfBook, bookDetails }: BookFormProps): JSX.Element {
     const { t } = useTranslation('address');
     const isCartUpdateLoading = false;
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
@@ -148,10 +148,12 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
             })
                 .catch((error) => setError(error))
                 .finally(() => setLoading(false));
-        } else {
-            if (isbnOfBook != null) {
-                book.ISBN = isbnOfBook
-            }
+        }
+        else {
+            book.ISBN = isbnOfBook
+            book.Title = titleOfBook
+            book.WriterName = authorOfBook
+            book.Publisher = publisherOfBook
         }
 
     }, []

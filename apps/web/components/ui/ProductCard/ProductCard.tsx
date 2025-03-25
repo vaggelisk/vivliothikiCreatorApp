@@ -27,6 +27,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
+
   let [book, setBook] = useState<Book | undefined>(undefined)
   const axiosInstance = axios.create({
     baseURL: 'https://librarian-api.notia-evia.gr',
@@ -74,8 +75,17 @@ export function ProductCard({
         })
       }
     }
-
   }
+
+  const goToFormFromMeta = async (nameOfBook? : string, isbnOfBook? : string, publisherOfBook? : string, authorOfBook? : string ) => {
+    // noinspection TypeScriptValidateTypes
+    await router.push({
+      pathname: '/search-on-editors',
+      query: { search: nameOfBook, isbn: isbnOfBook, publisher: publisherOfBook, author: authorOfBook, data: JSON.stringify({}) }
+    })
+  }
+
+
 
   const searchBiblionet = async (searchValue : string, isbnOfBook: string, bookDetails? : string) => {
     const dataPost2 = {
@@ -195,9 +205,13 @@ export function ProductCard({
         <span className="block pb-2 font-bold typography-text-sm" data-testid="product-card-vertical-price">
           isbn: {isbn?.substring(0,6)} {isbn?.substring(6,10)} {isbn?.substring(10,)}
         </span>
-        <SfButton type="button" onClick={() => submitSearchInternalOrBiblionet(name!, isbn, publisher)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
-          Προσθήκη
-        </SfButton>
+
+        {(router.route=='/search-on-meta') ?
+            <SfButton type="button" onClick={() => goToFormFromMeta(name!, isbn, publisher, author)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />} > vaggelis</SfButton> :
+            <SfButton type="button" onClick={() => submitSearchInternalOrBiblionet(name!, isbn, publisher)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
+              Προσθήκη
+            </SfButton>
+        }
       </div>
     </div>
   );

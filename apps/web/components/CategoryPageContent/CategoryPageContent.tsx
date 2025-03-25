@@ -17,6 +17,8 @@ export function CategoryPageContent({
   comeFromMeta,
   currentScreen,
   bookTitle,
+  bookAuthor,
+  bookPublisher,
   isbn,
   book,
   sidebar,
@@ -82,6 +84,8 @@ export function CategoryPageContent({
                   <BookForm
                       titleOfBook={bookTitle}
                       isbnOfBook={isbn}
+                      authorOfBook={bookAuthor}
+                      publisherOfBook={bookPublisher}
                       bookDetails={book}
                       onSave={save} />
                 </div>) :
