@@ -207,7 +207,7 @@ export function ProductCard({
         </span>
 
         {(router.route=='/search-on-meta') ?
-            <SfButton type="button" onClick={() => goToFormFromMeta(name!, isbn, publisher, author)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />} > vaggelis</SfButton> :
+            <SfButton type="button" onClick={() => goToFormFromMeta(name!, isbn, publisher, author)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />} > Προσθήκη</SfButton> :
             <SfButton type="button" onClick={() => submitSearchInternalOrBiblionet(name!, isbn, publisher)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
               Προσθήκη
             </SfButton>
