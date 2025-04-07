@@ -245,7 +245,7 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
             </label>
             <label  className=" md:col-span-2">
                 <FormLabel>Αριθμός Ταξινόμησης</FormLabel>
-                <SfInput name="SubjectNumber"
+                <SfInput name="SubjectDDC"
                          onChange={handleChange}
                          defaultValue={book.SubjectDDC}  />
             </label>
