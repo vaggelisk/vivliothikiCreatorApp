@@ -1,9 +1,18 @@
+/* eslint-disable max-statements, complexity, sonarjs/cognitive-complexity, unicorn/prevent-abbreviations, unicorn/prefer-set-has, no-secrets/no-secrets, prettier/prettier, unicorn/prefer-node-protocol, @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports */
 import { createServer } from '@vue-storefront/middleware';
 import consola from 'consola';
 import config from '../middleware.config';
 import https from "https";
 import http from "http";
 import cors from "cors";
+import { runScraper, type ScraperMode, type SourceKey } from './scanner';
+
+const SCANNER_SOURCES = new Set<SourceKey>(['biblionet', 'politeia', 'amazon']);
+const SCANNER_LABEL: Record<SourceKey, string> = {
+  biblionet: 'στο Biblionet',
+  politeia: 'στην Πολιτεία',
+  amazon: 'στο Amazon',
+};
 
 
 (async () => {
@@ -11,18 +20,78 @@ import cors from "cors";
   const host = process.argv[2] ?? '::';
   const port = Number(process.argv[3]) || 4000;
 
-  app.use(cors({
-        origin: [
-            "https://librarian.notia-evia.gr",
-            // ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(",") ?? []),
-        ],
-        credentials: true,
-      }
+  const allowedOrigins = new Set<string>([
+    'https://librarian.notia-evia.gr',
+    ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(',')
+      .map((entry) => entry.trim())
+      .filter(Boolean) ?? []),
+  ]);
 
-  ));
+  if (process.env.NODE_ENV !== 'production') {
+    allowedOrigins.add('http://localhost:3000');
+  }
+
+  app.use(
+    cors({
+      origin: [...allowedOrigins],
+      credentials: true,
+    }),
+  );
 
   app.listen(port, host, () => {
     consola.success(`API server listening on https://localhost:${port}`);
+  });
+
+  app.get('/scanner/health', (_req, res) => {
+    res.json({ status: 'ok' });
+  });
+
+  app.post('/scanner/api/scrape', async (req, res) => {
+    const mode: ScraperMode =
+      req.body?.mode === 'title' ? 'title' : req.body?.mode === 'url' ? 'url' : 'isbn';
+
+    const rawSource = `${req.body?.source ?? ''}`.trim().toLowerCase();
+    const source: SourceKey = SCANNER_SOURCES.has(rawSource as SourceKey)
+      ? (rawSource as SourceKey)
+      : 'biblionet';
+
+    const query = `${req.body?.query ?? ''}`.trim();
+    const isbn = `${req.body?.isbn ?? ''}`.trim();
+
+    if (mode === 'isbn' && !isbn) {
+      res.status(400).json({ error: 'Απαιτείται ISBN για τη συγκεκριμένη αναζήτηση.' });
+      return;
+    }
+
+    if (mode !== 'isbn' && !query) {
+      res.status(400).json({ error: 'Απαιτείται όρος αναζήτησης.' });
+      return;
+    }
+
+    const lookupValue = mode === 'isbn' ? isbn : query;
+
+    try {
+      const scraped = await runScraper(source, mode, lookupValue);
+      if (!scraped) {
+        res.status(404).json({
+          error: `Δεν βρέθηκαν αποτελέσματα ${SCANNER_LABEL[source] ?? 'στην πηγή'}.`,
+        });
+        return;
+      }
+
+      res.json({
+        success: true,
+        source,
+        mode,
+        scraped,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Παρουσιάστηκε σφάλμα κατά την αναζήτηση.';
+      res.status(500).json({ error: message });
+    }
   });
 
 
@@ -77,8 +146,7 @@ import cors from "cors";
     const request2 = https.request(options, function (response) {
       response.setEncoding('utf8');
       response.on('data', function (chunk) {
-        let str = JSON.stringify(chunk)
-        res.send( chunk )
+        res.send(chunk)
       });
 
     });
