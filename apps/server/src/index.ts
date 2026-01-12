@@ -42,11 +42,12 @@ const SCANNER_LABEL: Record<SourceKey, string> = {
     consola.success(`API server listening on https://localhost:${port}`);
   });
 
-  app.get('/scanner/health', (_req, res) => {
+
+  app.get('/scanner-health', (_req, res) => {
     res.json({ status: 'ok' });
   });
 
-  app.post('/scanner/api/scrape', async (req, res) => {
+  app.post('/scanner-api-scrape', async (req, res) => {
     const mode: ScraperMode =
       req.body?.mode === 'title' ? 'title' : req.body?.mode === 'url' ? 'url' : 'isbn';
 

@@ -50,7 +50,7 @@ $ yarn dev
 - Ορίζεις το endpoint του middleware μέσω `NEXT_PUBLIC_SCANNER_API_URL` (προεπιλογή `https://librarian-api.notia-evia.gr/scanner`). Αν δουλεύεις τοπικά, θέσε `http://localhost:4000/scanner`.
 - Για τις κλήσεις προς το middleware μπορείς να παρακάμψεις το παραπάνω και να δηλώσεις ρητά βάση με `NEXT_PUBLIC_LIBRARY_API_URL` (π.χ. `http://localhost:4000`).
 - Αν θέλεις να χρησιμοποιήσεις άλλα διαπιστευτήρια Biblionet, όρισε τα `NEXT_PUBLIC_BIBLIONET_USERNAME` και `NEXT_PUBLIC_BIBLIONET_PASSWORD`. Αλλιώς χρησιμοποιούνται οι προεπιλεγμένες τιμές της εφαρμογής.
-- Το middleware εκθέτει τα routes `GET /scanner/health` και `POST /scanner/api/scrape`, ενώ τιμές όπως `POLITEIA_API_KEY` (προαιρετικά) διαβάζονται από το περιβάλλον.
+- Το middleware εκθέτει τα routes `GET /scanner-health` και `POST /scanner-api-scrape`, ενώ τιμές όπως `POLITEIA_API_KEY` (προαιρετικά) διαβάζονται από το περιβάλλον.
 - Για τοπική ανάπτυξη επιτρέπεται αυτόματα το origin `http://localhost:3000` στο CORS· για πρόσθετα origins μπορείς να χρησιμοποιήσεις τη μεταβλητή `MIDDLEWARE_ALLOWED_ORIGINS`.
 
 ## The sdk connector part 

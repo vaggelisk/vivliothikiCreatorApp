@@ -109,7 +109,7 @@ const toIsbn13 = (value: string): string => {
   return value;
 };
 
-const SCANNER_ENDPOINT = `${SCANNER_BASE_URL.replace(/\/$/, '')}/api/scrape`;
+const SCANNER_ENDPOINT = `${SCANNER_BASE_URL.replace(/\/$/, '')}-api-scrape`;
 
 const middlewareBaseUrl = MIDDLEWARE_BASE_URL.replace(/\/$/, '');
 
