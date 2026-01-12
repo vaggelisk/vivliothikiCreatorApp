@@ -214,9 +214,10 @@ export function CreatorPageContent() {
 
     const runOcr = async (file: File) => {
         const imageData = await toDataUrl(file);
-        const { data } = await Tesseract.recognize(imageData, 'eng', {
-            tessedit_char_whitelist: '0123456789',
-        });
+        const digitsOnlyConfig: Partial<Tesseract.WorkerOptions> & Record<string, string> = {
+          tessedit_char_whitelist: '0123456789',
+        };
+        const { data } = await Tesseract.recognize(imageData, 'eng', digitsOnlyConfig);
         return extractDigits(data.text);
     };
 
