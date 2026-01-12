@@ -234,7 +234,7 @@ export function CreatorPageContent() {
         const objectUrl = URL.createObjectURL(file);
         try {
             const result = await barcodeReader.decodeFromImageUrl(objectUrl);
-            const digits = result.text.replace(/[^\d]/g, '');
+            const digits = result.getText().replace(/[^\d]/g, '');
             if (!digits) throw new Error('no digits');
             setBarcodeValue(digits);
             setBarcodeOcrStatus('done');
