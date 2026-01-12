@@ -21,12 +21,13 @@ type PuppeteerModule = typeof import('puppeteer');
 type PuppeteerLaunchOptions = NonNullable<Parameters<PuppeteerModule['launch']>[0]>;
 
 let puppeteerModule: PuppeteerModule | null = null;
+let puppeteerModulePromise: Promise<PuppeteerModule> | null = null;
 
 async function getPuppeteer(): Promise<PuppeteerModule> {
-  if (!puppeteerModule) {
-    puppeteerModule = await import('puppeteer');
+  if (!puppeteerModulePromise) {
+    puppeteerModulePromise = import('puppeteer') as Promise<PuppeteerModule>;
   }
-  return puppeteerModule;
+  return puppeteerModulePromise;
 }
 
 async function launchBrowser(
@@ -386,11 +387,12 @@ function extractPreloadedEntity(html: string): PoliteianetEntity | null {
 export async function scrapePoliteianetByUrl(url: string): Promise<ScrapePayload | null> {
   const barcode = extractBarcodeFromUrl(url);
   const response = await fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-      'Accept-Language': 'el-GR,el;q=0.9,en;q=0.8',
-    },
+    headers:
+      {
+        'User-Agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'Accept-Language': 'el-GR,el;q=0.9,en;q=0.8',
+      },
   });
 
   if (!response.ok) {
