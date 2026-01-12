@@ -43,6 +43,10 @@ const nextConfig = {
       include: (mPath) => ['components', 'hooks', 'layouts', 'helpers'].some((value) => mPath.includes(value)),
       sideEffects: false,
     });
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+    };
     // temporary SFUI fix
     // https://github.com/vercel/next.js/issues/17806#issuecomment-913437792
     config.module.rules.push({

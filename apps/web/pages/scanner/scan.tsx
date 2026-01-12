@@ -22,6 +22,7 @@ import { BarcodeFormat, DecodeHintType, NotFoundException, Result } from '@zxing
 import classNames from 'classnames';
 import type { Book } from '~/components/CreatorBookForm/types';
 import styles from '~/styles/scanner.module.scss';
+import { getLibrarianApiBaseUrl } from '~/helpers/api';
 
 type SourceKey = 'biblionet' | 'politeia' | 'amazon';
 
@@ -43,7 +44,7 @@ interface SourceState {
   message?: string;
 }
 
-const DEFAULT_REMOTE_BASE = 'https://librarian-api.notia-evia.gr';
+const DEFAULT_REMOTE_BASE = getLibrarianApiBaseUrl();
 const SCANNER_BASE_URL = (process.env.NEXT_PUBLIC_SCANNER_API_URL?.trim() ?? '') || `${DEFAULT_REMOTE_BASE}/scanner`;
 const MIDDLEWARE_BASE_URL = deriveMiddlewareBase(
   process.env.NEXT_PUBLIC_LIBRARY_API_URL?.trim(),

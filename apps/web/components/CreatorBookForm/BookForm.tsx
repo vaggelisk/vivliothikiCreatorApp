@@ -1,4 +1,4 @@
-import { FormEventHandler, useEffect, useRef, useState } from 'react';
+import { FormEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import {
     SfButton,
     SfCheckbox,
@@ -21,6 +21,7 @@ import {ContactInformationForm} from "~/components/ContactInformation/ContactInf
 import {useRouter} from "next/router";
 import {sortingOptions} from "~/mocks";
 import {useProductAttribute} from "~/hooks";
+import { getLibrarianApiBaseUrl } from '~/helpers/api';
 
 
 const emptyBook: Book = {
@@ -85,10 +86,10 @@ export function BookForm({ type, onSave, onClear, savedBook, titleOfBook, isbnOf
     const [summary, setSummary ] = useState('');
     const [loading, setLoading] = useState(true);
     const [loading2, setLoading2] = useState(true);
-    const axiosInstance = axios.create({
-        baseURL: 'https://librarian-api.notia-evia.gr',       //   avto einai gia to server
-        // baseURL: 'http://localhost:4000',                  //   avto einai gia to local instance
-    });
+    const apiBaseUrl = useMemo(getLibrarianApiBaseUrl, []);
+    const axiosInstance = useMemo(() => axios.create({
+        baseURL: apiBaseUrl,
+    }), [apiBaseUrl]);
     const [book, setBook] = useState<Book>( JSON.parse( JSON.stringify( bookDetails )))
 
     const contributorOptions = [

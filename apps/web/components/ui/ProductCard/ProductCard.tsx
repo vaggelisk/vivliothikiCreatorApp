@@ -6,7 +6,8 @@ import type {ProductCardProps} from '~/components';
 import {useRouter} from 'next/router';
 import axios from "axios";
 import type {Book} from "~/components/CreatorBookForm/types";
-import {useState} from "react";
+import {useMemo, useState} from "react";
+import { getLibrarianApiBaseUrl } from '~/helpers/api';
 
 
 export function ProductCard({
@@ -29,9 +30,10 @@ export function ProductCard({
   const router = useRouter();
 
   let [book, setBook] = useState<Book | undefined>(undefined)
-  const axiosInstance = axios.create({
-    baseURL: 'https://librarian-api.notia-evia.gr',
-  });
+  const apiBaseUrl = useMemo(getLibrarianApiBaseUrl, []);
+  const axiosInstance = useMemo(() => axios.create({
+    baseURL: apiBaseUrl,
+  }), [apiBaseUrl]);
 
   const searchInternal = async (nameOfBook: string, publisherOfBook: string ) => {
     const dataPost3 =  {

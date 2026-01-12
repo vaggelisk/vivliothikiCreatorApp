@@ -72,6 +72,7 @@ const SCANNER_LABEL: Record<SourceKey, string> = {
 
     try {
       const scraped = await runScraper(source, mode, lookupValue);
+      
       if (!scraped) {
         res.status(404).json({
           error: `Δεν βρέθηκαν αποτελέσματα ${SCANNER_LABEL[source] ?? 'στην πηγή'}.`,

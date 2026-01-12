@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { getLibrarianApiBaseUrl } from '~/helpers/api';
 
 export const QUERY_MY_POSTS = "QUERY_MY_POSTS";
 
@@ -20,7 +21,7 @@ export interface Post {
 }
 
 const axiosInstance = axios.create({
-    baseURL: 'https://librarian-api.notia-evia.gr',
+    baseURL: getLibrarianApiBaseUrl(),
 });
 
 const queryPostList: () => Promise<Post[]> = async () => {

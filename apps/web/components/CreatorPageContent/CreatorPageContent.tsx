@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FormEventHandler, useRef, useState} from 'react'
+import React, {ChangeEvent, FormEventHandler, useMemo, useRef, useState} from 'react'
 import {FormLabel, NarrowContainer, Search} from "~/components";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
@@ -21,6 +21,7 @@ import {
 import classNames from "classnames";
 import {offset} from "@floating-ui/react-dom";
 import {useRouter} from "next/router";
+import { getLibrarianApiBaseUrl } from '~/helpers/api';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -54,9 +55,10 @@ export function CreatorPageContent() {
     const [book, setBook] = useState<Book | undefined>(undefined)
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const axiosInstance = axios.create({
-        baseURL: 'https://librarian-api.notia-evia.gr',
-    });
+    const apiBaseUrl = useMemo(getLibrarianApiBaseUrl, []);
+    const axiosInstance = useMemo(() => axios.create({
+        baseURL: apiBaseUrl,
+    }), [apiBaseUrl]);
 
     const { refs } = useDropdown({  onClose: close });
 

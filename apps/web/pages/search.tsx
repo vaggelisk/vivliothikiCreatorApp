@@ -6,6 +6,7 @@ import { prefetchProducts, useProducts } from '~/hooks';
 import { DefaultLayout } from '~/layouts';
 import axios from "axios";
 import {useEffect, useState} from "react";
+import { getLibrarianApiBaseUrl } from '~/helpers/api';
 
 
 type ProductKantro = {
@@ -21,7 +22,7 @@ type ProductKantro = {
 }
 
 const axiosInstance = axios.create({
-  baseURL: 'https://librarian-api.notia-evia.gr',
+  baseURL: getLibrarianApiBaseUrl(),
 });
 
 
