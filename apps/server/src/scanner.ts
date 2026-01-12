@@ -18,7 +18,7 @@ export type ScraperMode = 'isbn' | 'title' | 'url';
 export type SourceKey = 'biblionet' | 'politeia' | 'amazon';
 
 type PuppeteerModule = typeof import('puppeteer');
-type PuppeteerLaunchOptions = Parameters<PuppeteerModule['launch']>[0];
+type PuppeteerLaunchOptions = NonNullable<Parameters<PuppeteerModule['launch']>[0]>;
 
 let puppeteerModule: PuppeteerModule | null = null;
 
@@ -38,7 +38,7 @@ async function launchBrowser(
     ...launchOverrides
   } = options ?? {};
   const { default: puppeteer } = await getPuppeteer();
-  const headless = (providedHeadless ?? 'new') as PuppeteerLaunchOptions['headless'];
+  const headless: PuppeteerLaunchOptions['headless'] = providedHeadless ?? true;
   const args = Array.isArray(providedArgs)
     ? Array.from(
         new Set([...providedArgs, '--no-sandbox', '--disable-setuid-sandbox']),
@@ -176,19 +176,19 @@ async function scrapeBiblionet({
 export async function scrapeBiblionetByIsbn(
   isbn: string,
 ): Promise<ScrapePayload | null> {
-  return scrapeBiblionet({ query: isbn, launchOptions: { headless: 'new' } });
+  return scrapeBiblionet({ query: isbn, launchOptions: { headless: true } });
 }
 
 export async function scrapeBiblionetByTitle(
   title: string,
 ): Promise<ScrapePayload | null> {
-  return scrapeBiblionet({ query: title, launchOptions: { headless: 'new' } });
+  return scrapeBiblionet({ query: title, launchOptions: { headless: true } });
 }
 
 export async function scrapeBiblionetByUrl(
   url: string,
 ): Promise<ScrapePayload | null> {
-  return scrapeBiblionet({ directUrl: url, launchOptions: { headless: 'new' } });
+  return scrapeBiblionet({ directUrl: url, launchOptions: { headless: true } });
 }
 
 const POLITEIA_SEARCH_URL = 'https://api.politeianet.gr/v1/Products/Search';
@@ -272,13 +272,13 @@ function mapPoliteianetProduct(product: PoliteianetProduct | null): ScrapePayloa
     product,
     (entry) =>
       entry.contributorCategoryCode === 'author' ||
-      entry.contributorCategoryName?.toLowerCase().includes('συγγραφ'),
+      Boolean(entry.contributorCategoryName?.toLowerCase().includes('συγγραφ')),
   );
   const publisher = extractContributor(
     product,
     (entry) =>
       entry.contributorCategoryCode === 'publisher' ||
-      entry.contributorCategoryName?.toLowerCase().includes('εκδότη'),
+      Boolean(entry.contributorCategoryName?.toLowerCase().includes('εκδότη')),
   );
   const coverUrl = normaliseString(product.img1);
 
