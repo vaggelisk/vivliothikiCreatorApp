@@ -7,7 +7,6 @@
     "apps/*"
   ],
   "scripts": {
-    "prepare": "is-ci || husky install",
     "build": "turbo run build",
     "build:analyze": "turbo run build:analyze",
     "dev": "turbo run dev",
@@ -33,7 +32,6 @@
     "commitizen": "^4.2.5",
     "cypress": "^13.2.0",
     "eslint": "^8.38.0",
-    "husky": "^7.0.4",
     "is-ci": "^3.0.1",
     "lint-staged": "^13.2.1",
     "prettier": "^2.8.0",
