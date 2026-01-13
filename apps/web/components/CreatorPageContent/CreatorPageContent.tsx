@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FormEventHandler, useMemo, useRef, useState} from 'react'
+import React, {ChangeEvent, FormEventHandler, useEffect, useMemo, useRef, useState} from 'react'
 import {FormLabel, NarrowContainer, Search} from "~/components";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
@@ -17,6 +17,7 @@ import {
     SfIconSearch, SfIconShoppingCart,
     SfInput,
     SfModal,
+    SfBadge,
     useDisclosure,
     useDropdown
 } from "@storefront-ui/react";
@@ -67,6 +68,8 @@ const TABS: { key: TabKey; label: string }[] = [
     { key: 'barcode', label: 'Barcode' },
     { key: 'picture', label: 'Number Picture' },
 ];
+
+type DecodeControls = Awaited<ReturnType<BrowserMultiFormatReader['decodeFromVideoDevice']>>;
 
 export function CreatorPageContent() {
     const { isOpen, open, close } = useDisclosure({ initialValue: false });
@@ -222,6 +225,8 @@ export function CreatorPageContent() {
     };
 
     const barcodeReader = useMemo(() => new BrowserMultiFormatReader(), []);
+    const barcodeVideoRef = useRef<HTMLVideoElement>(null);
+    const [isBarcodeDetected, setIsBarcodeDetected] = useState(false);
 
     const handleBarcodeFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -298,6 +303,43 @@ export function CreatorPageContent() {
     };
 
     const classes = useStyles();
+
+    useEffect(() => {
+        if (activeTab !== 'barcode' || !barcodeVideoRef.current) return;
+
+        setIsBarcodeDetected(false);
+        let controls: DecodeControls | undefined;
+
+        const start = async () => {
+            try {
+                controls = await barcodeReader.decodeFromVideoDevice(
+                    undefined,
+                    barcodeVideoRef.current!,
+                    (result, error, ctrl) => {
+                        if (result) {
+                            const digits = result.getText().replace(/[^\d]/g, '');
+                            if (digits) {
+                                setBarcodeValue(digits);
+                                setIsBarcodeDetected(true);
+                                ctrl.stop();
+                            }
+                        } else if (error && error.name !== 'NotFoundException') {
+                            console.error(error);
+                        }
+                    },
+                );
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        start();
+
+        return () => {
+            controls?.stop();
+            barcodeReader.reset();
+        };
+    }, [activeTab, barcodeReader, barcodeValue]);
 
     return (
         <NarrowContainer>
@@ -398,6 +440,22 @@ export function CreatorPageContent() {
                                 )
                             }
                         />
+                        <video
+                            ref={barcodeVideoRef}
+                            className="mt-4 w-full rounded-lg border border-dashed border-neutral-300"
+                            autoPlay
+                            muted
+                            playsInline
+                        />
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                            {isBarcodeDetected ? (
+                                <SfBadge variant="success" className="flex items-center gap-1 px-3 py-1">
+                                    <SfIconCheck className="text-success-600" /> Barcode καταγράφηκε
+                                </SfBadge>
+                            ) : (
+                                <span>Στόχευσε το barcode με την κάμερα</span>
+                            )}
+                        </div>
                         <SfButton type="submit" className="w-full md:w-1/3">
                             Αναζήτηση με Barcode
                         </SfButton>
