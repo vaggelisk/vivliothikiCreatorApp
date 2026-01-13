@@ -13,14 +13,18 @@ import { BrowserMultiFormatReader } from '@zxing/browser';
 import {
     SfButton,
     SfIconCancel,
-    SfIconClose, SfIconCreditCard, SfIconGridView, SfIconPerson,
-    SfIconSearch, SfIconShoppingCart,
+    SfIconCheck,
+    SfIconClose,
+    SfIconCreditCard,
+    SfIconGridView,
+    SfIconLock,
+    SfIconPerson,
+    SfIconSearch,
     SfInput,
     SfModal,
-    SfBadge,
     useDisclosure,
-    useDropdown
-} from "@storefront-ui/react";
+    useDropdown,
+} from '@storefront-ui/react';
 import classNames from "classnames";
 import {offset} from "@floating-ui/react-dom";
 import {useRouter} from "next/router";
@@ -337,7 +341,6 @@ export function CreatorPageContent() {
 
         return () => {
             controls?.stop();
-            barcodeReader.reset();
         };
     }, [activeTab, barcodeReader, barcodeValue]);
 
@@ -449,9 +452,9 @@ export function CreatorPageContent() {
                         />
                         <div className="flex items-center gap-2 text-sm text-neutral-600">
                             {isBarcodeDetected ? (
-                                <SfBadge variant="success" className="flex items-center gap-1 px-3 py-1">
-                                    <SfIconCheck className="text-success-600" /> Barcode καταγράφηκε
-                                </SfBadge>
+                                <span className="flex items-center gap-1 rounded-full bg-success-100 px-3 py-1 text-success-700">
+                                    <SfIconCheck /> Barcode καταγράφηκε
+                                </span>
                             ) : (
                                 <span>Στόχευσε το barcode με την κάμερα</span>
                             )}

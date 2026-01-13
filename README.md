@@ -99,6 +99,8 @@ sudo -u www-data php8.1 ./bin/magento setup:upgrade      && sudo -u www-data  ph
 
 cd /var/www/librarian.notia-evia.gr/vivliothikiCreatorApp
 
+nvm use 18
+
 git pull
 
 npx yarn build
