@@ -443,14 +443,16 @@ export function CreatorPageContent() {
                                 )
                             }
                         />
-                        <video
-                            ref={barcodeVideoRef}
-                            className="mt-4 w-full rounded-lg border border-dashed border-neutral-300"
-                            autoPlay
-                            muted
-                            playsInline
-                        />
-                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                        <div className="mt-4 w-full max-w-md overflow-hidden rounded-lg border border-dashed border-neutral-300">
+                            <video
+                                ref={barcodeVideoRef}
+                                className="h-48 w-full object-cover"
+                                autoPlay
+                                muted
+                                playsInline
+                            />
+                        </div>
+                        <div className="mt-2 flex items-center gap-2 text-sm text-neutral-600">
                             {isBarcodeDetected ? (
                                 <span className="flex items-center gap-1 rounded-full bg-success-100 px-3 py-1 text-success-700">
                                     <SfIconCheck /> Barcode καταγράφηκε
