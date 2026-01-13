@@ -462,7 +462,7 @@ export function CreatorPageContent() {
                             )}
                         </div>
                         <SfButton type="submit" className="w-full md:w-1/3">
-                            Αναζήτηση με Barcode
+                            Αναζήτηση
                         </SfButton>
                     </form>
                 )}
