@@ -94,6 +94,7 @@ export function CreatorPageContent() {
     const [ocrError, setOcrError] = useState<string | null>(null);
     const [book, setBook] = useState<Book | undefined>(undefined);
     const [loading, setLoading] = useState(false);
+    const [isActionInProgress, setIsActionInProgress] = useState(false);
     const router = useRouter();
     const apiBaseUrl = useMemo(getLibrarianApiBaseUrl, []);
     const axiosInstance = useMemo(() => axios.create({
@@ -112,6 +113,7 @@ export function CreatorPageContent() {
 
     const fetchBookByIsbn = async (lookup: string) => {
         if (!lookup) return;
+        setIsActionInProgress(true);
         open();
         setLoading(true);
         const dataPost2 = {
@@ -166,6 +168,7 @@ export function CreatorPageContent() {
                     Category: responseBooks.Category,
                 })) ?? [];
             if (responseBooks.length) {
+                setIsActionInProgress(false);
                 setBook(responseBooks[0]);
                 setSearchTitleValue(responseBooks[0].Title);
                 setSearchPublisherValue(responseBooks[0].Publisher);
@@ -174,6 +177,7 @@ export function CreatorPageContent() {
             }
         } catch (error) {
             console.log(error);
+            setIsActionInProgress(false);
         } finally {
             setLoading(false);
         }
@@ -602,6 +606,17 @@ export function CreatorPageContent() {
                     </SfModal>
                 )}
             </div>
+            {isActionInProgress && (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50" role="status" aria-live="polite">
+                    <div className="flex items-center gap-3 rounded-lg bg-white px-5 py-4 shadow-lg">
+                        <span
+                            className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-900"
+                            aria-hidden
+                        />
+                        <span className="text-sm font-semibold text-neutral-900">Αναζήτηση και μετάβαση...</span>
+                    </div>
+                </div>
+            )}
         </NarrowContainer>
     )
 }

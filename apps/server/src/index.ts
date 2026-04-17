@@ -6,6 +6,9 @@ import https from "https";
 import http from "http";
 import cors from "cors";
 import { runScraper, type ScraperMode, type SourceKey } from './scanner';
+import { scrapeBiblionetSearch } from './biblionet';
+import { scrapeMetabookSearch } from './metabook';
+import { getPuppeteer } from './scanner';
 
 const SCANNER_SOURCES = new Set<SourceKey>(['biblionet', 'politeia', 'amazon']);
 const SCANNER_LABEL: Record<SourceKey, string> = {
@@ -92,6 +95,130 @@ const SCANNER_LABEL: Record<SourceKey, string> = {
         error instanceof Error
           ? error.message
           : 'Παρουσιάστηκε σφάλμα κατά την αναζήτηση.';
+      res.status(500).json({ error: message });
+    }
+  });
+
+
+  app.post('/biblionet-search', async (req, res) => {
+    const query = `${req.body?.query ?? ''}`.trim();
+    if (!query) {
+      res.status(400).json({ error: 'Απαιτείται όρος αναζήτησης.' });
+      return;
+    }
+    try {
+      const { results, rawCount } = await scrapeBiblionetSearch(query);
+      res.json({ success: true, total: results.length, rawCount, results });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Σφάλμα κατά την αναζήτηση.';
+      res.status(500).json({ error: message });
+    }
+  });
+
+
+  app.post('/metabook-search', async (req, res) => {
+    const query = `${req.body?.query ?? ''}`.trim();
+    if (!query) {
+      res.status(400).json({ error: 'Απαιτείται όρος αναζήτησης.' });
+      return;
+    }
+    try {
+      const { results, rawCount } = await scrapeMetabookSearch(query);
+      res.json({ success: true, total: results.length, rawCount, results });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Σφάλμα κατά την αναζήτηση.';
+      res.status(500).json({ error: message });
+    }
+  });
+
+
+  /**
+   * Debug endpoint — use this to inspect the live DOM of any page so you can
+   * find the correct CSS selectors for your scrapers.
+   *
+   * POST /debug-page
+   * { "url": "https://metabook.gr/search/?query=test", "waitMs": 3000 }
+   *
+   * Returns: page title, unique class names, tag frequencies, and a snippet
+   * of the body HTML so you can copy-paste the right selectors.
+   */
+  app.post('/debug-page', async (req, res) => {
+    const url = `${req.body?.url ?? ''}`.trim();
+    if (!url) {
+      res.status(400).json({ error: 'Απαιτείται URL.' });
+      return;
+    }
+    const extraWaitMs = Math.min(Number(req.body?.waitMs ?? 3000), 15_000);
+    try {
+      const { default: puppeteer } = await getPuppeteer();
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      });
+      try {
+        const page = await browser.newPage();
+        page.setDefaultNavigationTimeout(30_000);
+        await page.setRequestInterception(true);
+        page.on('request', (r) => {
+          if (r.resourceType() === 'image' || r.resourceType() === 'media') {
+            r.abort();
+          } else {
+            r.continue();
+          }
+        });
+        await page.setUserAgent(
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        );
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+        // Wait extra ms for JS/SPA to render
+        await new Promise((r) => setTimeout(r, extraWaitMs));
+
+        const info = await page.evaluate(() => {
+          const allEls = Array.from(document.querySelectorAll('*'));
+          const classSet = new Set<string>();
+          const tagCount: Record<string, number> = {};
+          for (const el of allEls) {
+            for (const c of Array.from(el.classList)) classSet.add(c);
+            tagCount[el.tagName] = (tagCount[el.tagName] ?? 0) + 1;
+          }
+          return {
+            title: document.title,
+            url: location.href,
+            bodyLength: document.body.innerHTML.length,
+            // first 20 000 chars of body HTML — more context than 8000
+            bodySnippet: document.body.innerHTML.slice(0, 20_000),
+            allClasses: Array.from(classSet).sort(),
+            tagFrequency: Object.entries(tagCount)
+              .sort(([, a], [, b]) => b - a)
+              .slice(0, 30)
+              .reduce<Record<string, number>>((acc, [k, v]) => { acc[k] = v; return acc; }, {}),
+          };
+        });
+
+        // Optional: test CSS selectors and return outerHTML of first match
+        const selectorsToTest: string[] = Array.isArray(req.body?.selectorDetails)
+          ? (req.body.selectorDetails as string[]).slice(0, 5)
+          : [];
+
+        const selectorResults: Record<string, { count: number; firstHtml: string }> = {};
+        for (const sel of selectorsToTest) {
+          try {
+            const detail = await page.evaluate((s: string) => {
+              const els = Array.from(document.querySelectorAll(s));
+              return { count: els.length, firstHtml: els[0]?.outerHTML?.slice(0, 3000) ?? '' };
+            }, sel);
+            selectorResults[sel] = detail;
+          } catch {
+            selectorResults[sel] = { count: -1, firstHtml: 'error evaluating selector' };
+          }
+        }
+
+        res.json({ ...info, selectorResults });
+      } finally {
+        await browser.close();
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Σφάλμα.';
       res.status(500).json({ error: message });
     }
   });

@@ -1,6 +1,37 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+function resolveMagentoGraphqlUrl(
+  graphQlUrl: string | undefined,
+  baseUrl: string | undefined,
+): string | undefined {
+  const rawGraphQl = graphQlUrl?.trim();
+  const rawBase = baseUrl?.trim().replace(/\/+$/, '');
+
+  if (!rawGraphQl) {
+    return rawBase ? `${rawBase}/graphql` : undefined;
+  }
+
+  // Already absolute URL
+  if (/^https?:\/\//i.test(rawGraphQl)) {
+    return rawGraphQl;
+  }
+
+  // Relative URL from env (e.g. /graphql or graphql) must be resolved for Node runtime
+  if (!rawBase) {
+    return rawGraphQl;
+  }
+
+  const normalizedPath = rawGraphQl.startsWith('/') ? rawGraphQl : `/${rawGraphQl}`;
+  return `${rawBase}${normalizedPath}`;
+}
+
+const magentoBaseUrl = process.env.VSF_MAGENTO_BASE_URL;
+const magentoGraphqlUrl = resolveMagentoGraphqlUrl(
+  process.env.VSF_MAGENTO_GRAPHQL_URL,
+  magentoBaseUrl,
+);
+
 const cookieNames = {
   currencyCookieName: 'vsf-currency',
   countryCookieName: 'vsf-country',
@@ -17,7 +48,7 @@ const config = {
     magento: {
       location: '@vue-storefront/magento-api/server',
       configuration: {
-        api: process.env.VSF_MAGENTO_GRAPHQL_URL,
+        api: magentoGraphqlUrl,
         cookies: {
           ...cookieNames,
         },
@@ -31,8 +62,8 @@ const config = {
         customApolloHttpLinkOptions: {
           useGETForQueries: true,
         },
-        magentoBaseUrl: process.env.VSF_MAGENTO_BASE_URL,
-        magentoApiEndpoint: process.env.VSF_MAGENTO_GRAPHQL_URL,
+        magentoBaseUrl,
+        magentoApiEndpoint: magentoGraphqlUrl,
         imageProvider: process.env.NUXT_IMAGE_PROVIDER,
         recaptcha: {
           isEnabled: process.env.VSF_RECAPTCHA_ENABLED === 'true',

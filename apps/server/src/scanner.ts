@@ -23,7 +23,7 @@ type PuppeteerLaunchOptions = NonNullable<Parameters<PuppeteerModule['launch']>[
 let puppeteerModule: PuppeteerModule | null = null;
 let puppeteerModulePromise: Promise<PuppeteerModule> | null = null;
 
-async function getPuppeteer(): Promise<PuppeteerModule> {
+export async function getPuppeteer(): Promise<PuppeteerModule> {
   if (!puppeteerModulePromise) {
     puppeteerModulePromise = import('puppeteer') as Promise<PuppeteerModule>;
   }

@@ -6,6 +6,7 @@ import { prefetchProducts, useProducts } from '~/hooks';
 import { DefaultLayout } from '~/layouts';
 import axios from "axios";
 import {useEffect, useState} from "react";
+import { SfLoaderCircular } from '@storefront-ui/react';
 import { sum, uniqWith } from "lodash";
 import { getLibrarianApiBaseUrl } from '~/helpers/api';
 
@@ -45,18 +46,19 @@ export default function SearchOnMetaPage() {
   const { t } = useTranslation('category');
   const { query, route } = useRouter();
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   // const { data: productsCatalog } = useProducts();
   const [productsKantro, setProductsKantro] = useState<ProductKantro[] | undefined>([])
 
 
-  const dataPost3 = {
-    "params": 'query='+query?.search+'&hitsPerPage=10'
-  }
-
   useEffect(() => {
+    const searchTerm = query?.search;
+    if (!searchTerm) return;
+
+    setLoading(true);
     axiosInstance.post(
-        '/search-on-metabook',
-        dataPost3,
+        '/metabook-search',
+        { query: searchTerm },
         {
           headers: {
             "Content-Type": 'application/json',
@@ -66,20 +68,20 @@ export default function SearchOnMetaPage() {
       if (response.status >= 400) {
         throw new Error("server error");
       }
-      if (response.data) {
-        let responseProductKantro: ProductKantro[] = response.data?.hits.map((responseProductKantro: any) => {
+      if (response.data?.results) {
+        let responseProductKantro: ProductKantro[] = response.data.results.map((item: any) => {
           return {
-            name: responseProductKantro.title,
-            author: responseProductKantro?.authors[0],
-            publisher: responseProductKantro?.publisher,
+            name: item.title,
+            author: item.author,
+            publisher: item.publisher,
             thumbnail: {
-              url: responseProductKantro.cover_url,
-              alt: responseProductKantro.title
+              url: item.photo,
+              alt: item.title
             },
             review_count: 13,
-            url_key: responseProductKantro.url_key,
-            isbn: responseProductKantro?.isbn_13,
-            id: responseProductKantro?.objectID
+            url_key: item.url,
+            isbn: item.isbn,
+            id: item.isbn
           }
         })
         if (responseProductKantro) {
@@ -89,13 +91,27 @@ export default function SearchOnMetaPage() {
           )
         }
       } else {
-        setProductsKantro(response.data)
+        setProductsKantro([])
       }
     }).catch((error) => setError(error))
-      .finally(() =>console.log(productsKantro?.length));
+      .finally(() => {
+        setLoading(false);
+        console.log(productsKantro?.length);
+      });
   }, []);
 
   const categoryTitle = 'Αποτελέσματα στο metabook για '+'"'+query?.search+'"';
+
+  if (loading) {
+    return (
+      <DefaultLayout>
+        <div className="flex flex-col items-center justify-center py-24">
+          <SfLoaderCircular size="xl" />
+          <p className="mt-4 typography-text-lg">Αναζήτηση στο metabook...</p>
+        </div>
+      </DefaultLayout>
+    );
+  }
 
   return (
     <DefaultLayout >
