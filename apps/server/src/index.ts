@@ -25,6 +25,15 @@ const normalizeOrigin = (value: string): string => {
   }
 };
 
+const isTrustedDomainOrigin = (origin: string): boolean => {
+  try {
+    const parsed = new URL(origin);
+    return parsed.hostname === 'notia-evia.gr' || parsed.hostname.endsWith('.notia-evia.gr');
+  } catch {
+    return false;
+  }
+};
+
 
 (async () => {
   const app = await createServer({ integrations: config.integrations });
@@ -43,7 +52,10 @@ const normalizeOrigin = (value: string): string => {
     allowedOrigins.add('http://localhost:3000');
   }
 
-  const isAllowedOrigin = (origin: string): boolean => allowedOrigins.has(normalizeOrigin(origin));
+  const isAllowedOrigin = (origin: string): boolean => {
+    const normalized = normalizeOrigin(origin);
+    return allowedOrigins.has(normalized) || isTrustedDomainOrigin(normalized);
+  };
 
   // Add CORS headers early so even error responses keep ACAO for allowed origins.
   app.use((req, res, next) => {
