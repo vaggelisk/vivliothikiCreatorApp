@@ -17,6 +17,14 @@ const SCANNER_LABEL: Record<SourceKey, string> = {
   amazon: 'στο Amazon',
 };
 
+const normalizeOrigin = (value: string): string => {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return value.trim().replace(/\/+$/, '');
+  }
+};
+
 
 (async () => {
   const app = await createServer({ integrations: config.integrations });
@@ -25,10 +33,11 @@ const SCANNER_LABEL: Record<SourceKey, string> = {
 
   const allowedOrigins = new Set<string>([
     'https://librarian.notia-evia.gr',
+    'https://www.librarian.notia-evia.gr',
     ...(process.env.MIDDLEWARE_ALLOWED_ORIGINS?.split(',')
-      .map((entry) => entry.trim())
+      .map((entry) => normalizeOrigin(entry))
       .filter(Boolean) ?? []),
-  ]);
+  ].map((origin) => normalizeOrigin(origin)));
 
   if (process.env.NODE_ENV !== 'production') {
     allowedOrigins.add('http://localhost:3000');
@@ -36,7 +45,15 @@ const SCANNER_LABEL: Record<SourceKey, string> = {
 
   app.use(
     cors({
-      origin: [...allowedOrigins],
+      origin: (origin, callback) => {
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+
+        const normalized = normalizeOrigin(origin);
+        callback(null, allowedOrigins.has(normalized));
+      },
       credentials: true,
     }),
   );
