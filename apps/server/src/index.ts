@@ -93,6 +93,28 @@ const isTrustedDomainOrigin = (origin: string): boolean => {
     }),
   );
 
+  // Dedicated CORS guard for metabook endpoint so browser can always read 4xx/5xx JSON.
+  app.use('/metabook-search', (req, res, next) => {
+    const originHeader = req.headers.origin;
+    const origin = typeof originHeader === 'string' ? normalizeOrigin(originHeader) : '';
+
+    if (origin && isAllowedOrigin(origin)) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Vary', 'Origin');
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
+
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(204);
+      return;
+    }
+
+    next();
+  });
+
   app.listen(port, host, () => {
     consola.success(`API server listening on https://localhost:${port}`);
   });
@@ -169,6 +191,14 @@ const isTrustedDomainOrigin = (origin: string): boolean => {
 
 
   app.post('/metabook-search', async (req, res) => {
+    const originHeader = req.headers.origin;
+    const origin = typeof originHeader === 'string' ? normalizeOrigin(originHeader) : '';
+    if (origin && isAllowedOrigin(origin)) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Vary', 'Origin');
+      res.header('Access-Control-Allow-Credentials', 'true');
+    }
+
     const query = `${req.body?.query ?? ''}`.trim();
     if (!query) {
       res.status(400).json({ error: 'Απαιτείται όρος αναζήτησης.' });
