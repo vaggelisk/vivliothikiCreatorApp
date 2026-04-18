@@ -43,6 +43,29 @@ const normalizeOrigin = (value: string): string => {
     allowedOrigins.add('http://localhost:3000');
   }
 
+  const isAllowedOrigin = (origin: string): boolean => allowedOrigins.has(normalizeOrigin(origin));
+
+  // Add CORS headers early so even error responses keep ACAO for allowed origins.
+  app.use((req, res, next) => {
+    const originHeader = req.headers.origin;
+    const origin = typeof originHeader === 'string' ? normalizeOrigin(originHeader) : undefined;
+
+    if (origin && isAllowedOrigin(origin)) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+      res.header('Vary', 'Origin');
+    }
+
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(204);
+      return;
+    }
+
+    next();
+  });
+
   app.use(
     cors({
       origin: (origin, callback) => {
@@ -52,7 +75,7 @@ const normalizeOrigin = (value: string): string => {
         }
 
         const normalized = normalizeOrigin(origin);
-        callback(null, allowedOrigins.has(normalized));
+        callback(null, isAllowedOrigin(normalized));
       },
       credentials: true,
     }),
