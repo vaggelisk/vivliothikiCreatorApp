@@ -7,7 +7,6 @@ import http from "http";
 import cors from "cors";
 import { runScraper, type ScraperMode, type SourceKey } from './scanner';
 import { scrapeBiblionetSearch } from './biblionet';
-import { scrapeMetabookSearch } from './metabook';
 import { getPuppeteer } from './scanner';
 
 const SCANNER_SOURCES = new Set<SourceKey>(['biblionet', 'politeia', 'amazon']);
@@ -205,7 +204,7 @@ const isTrustedDomainOrigin = (origin: string): boolean => {
       return;
     }
     try {
-      const { results, rawCount } = await scrapeMetabookSearch(query);
+      const { results, rawCount } = await scrapeBiblionetSearch(query);
       res.json({ success: true, total: results.length, rawCount, results });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Σφάλμα κατά την αναζήτηση.';
@@ -265,6 +264,79 @@ const isTrustedDomainOrigin = (origin: string): boolean => {
             bodyLength: document.body.innerHTML.length,
             inputs: allInputs,
             forms: allForms,
+            bodySnippet: document.body.innerHTML.slice(0, 30_000),
+          };
+        });
+
+        res.json(info);
+      } finally {
+        await browser.close();
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Debug failed.';
+      res.status(500).json({ error: message });
+    }
+  });
+
+  /**
+   * Debug endpoint — runs the full biblionet search flow (navigate → type → enter → wait)
+   * then dumps DOM info so you can find the correct selectors.
+   *
+   * GET /debug-biblionet?q=test
+   */
+  app.get('/debug-biblionet', async (req, res) => {
+    const searchTerm = `${req.query?.q ?? 'ιστορία'}`.trim();
+    try {
+      const { default: puppeteer } = await getPuppeteer();
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      });
+      try {
+        const page = await browser.newPage();
+        page.setDefaultNavigationTimeout(30_000);
+        page.setDefaultTimeout(15_000);
+        await page.setUserAgent(
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        );
+
+        await page.goto('https://www.biblionet.gr/', { waitUntil: 'domcontentloaded' });
+
+        // Try to find and use the search box
+        let searchInput = null;
+        for (const sel of ['#headerSearch', 'input[name="search"]', 'input[type="search"]', 'input[type="text"]']) {
+          searchInput = await page.$(sel).catch(() => null);
+          if (searchInput) break;
+        }
+
+        if (searchInput) {
+          await searchInput.type(searchTerm, { delay: 20 });
+          await Promise.all([
+            page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20_000 }).catch(() => {}),
+            page.keyboard.press('Enter'),
+          ]);
+        }
+
+        // Wait for content
+        await new Promise(r => setTimeout(r, 3000));
+
+        const info = await page.evaluate(() => {
+          const allClasses = new Set<string>();
+          const allIds: string[] = [];
+          for (const el of Array.from(document.querySelectorAll('*'))) {
+            for (const c of Array.from(el.classList)) allClasses.add(c);
+            if (el.id) allIds.push(el.id);
+          }
+          const allInputs = Array.from(document.querySelectorAll('input')).map(el => ({
+            id: el.id, name: el.name, type: el.type, className: el.className, placeholder: el.placeholder,
+          }));
+          return {
+            title: document.title,
+            url: location.href,
+            bodyLength: document.body.innerHTML.length,
+            allIds: allIds.slice(0, 60),
+            topClasses: Array.from(allClasses).slice(0, 80),
+            inputs: allInputs,
             bodySnippet: document.body.innerHTML.slice(0, 30_000),
           };
         });

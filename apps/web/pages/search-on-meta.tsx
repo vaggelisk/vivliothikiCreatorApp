@@ -57,7 +57,7 @@ export default function SearchOnMetaPage() {
 
     setLoading(true);
     axiosInstance.post(
-        '/metabook-search',
+        '/biblionet-search',
         { query: searchTerm },
         {
           headers: {
@@ -100,14 +100,14 @@ export default function SearchOnMetaPage() {
       });
   }, []);
 
-  const categoryTitle = 'Αποτελέσματα στο metabook για '+'"'+query?.search+'"';
+  const categoryTitle = 'Αποτελέσματα στο biblionet για '+'"'+query?.search+'"';
 
   if (loading) {
     return (
       <DefaultLayout>
         <div className="flex flex-col items-center justify-center py-24">
           <SfLoaderCircular size="xl" />
-          <p className="mt-4 typography-text-lg">Αναζήτηση στο metabook...</p>
+          <p className="mt-4 typography-text-lg">Αναζήτηση στο biblionet...</p>
         </div>
       </DefaultLayout>
     );
