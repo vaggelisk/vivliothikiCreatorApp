@@ -213,6 +213,71 @@ const isTrustedDomainOrigin = (origin: string): boolean => {
     }
   });
 
+  /**
+   * Debug endpoint — runs the exact same Puppeteer flow as metabook-search
+   * (navigate, wait for CF, then dumps title + first 30k chars of HTML) so
+   * you can see what the VPS browser actually renders.
+   *
+   * GET /debug-metabook
+   */
+  app.get('/debug-metabook', async (_req, res) => {
+    try {
+      const { default: puppeteer } = await getPuppeteer();
+      const browser = await puppeteer.launch({
+        headless: 'new' as any,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1920,1080'],
+      });
+      try {
+        const page = await browser.newPage();
+        page.setDefaultNavigationTimeout(45_000);
+        await page.setViewport({ width: 1920, height: 1080 });
+        await page.setUserAgent(
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        );
+        await page.goto('https://metabook.gr', { waitUntil: 'domcontentloaded' });
+
+        // Wait for CF challenge to clear (up to 25s)
+        for (let i = 0; i < 25; i++) {
+          const title = await page.title();
+          if (!title.toLowerCase().includes('moment')) break;
+          await new Promise(r => setTimeout(r, 1000));
+        }
+
+        // Extra wait for JS to render
+        await new Promise(r => setTimeout(r, 3000));
+
+        const info = await page.evaluate(() => {
+          const allInputs = Array.from(document.querySelectorAll('input')).map((el) => ({
+            id: el.id,
+            name: el.name,
+            type: el.type,
+            className: el.className,
+            placeholder: el.placeholder,
+          }));
+          const allForms = Array.from(document.querySelectorAll('form')).map((f) => ({
+            id: f.id,
+            className: f.className,
+            inputCount: f.querySelectorAll('input').length,
+          }));
+          return {
+            title: document.title,
+            url: location.href,
+            bodyLength: document.body.innerHTML.length,
+            inputs: allInputs,
+            forms: allForms,
+            bodySnippet: document.body.innerHTML.slice(0, 30_000),
+          };
+        });
+
+        res.json(info);
+      } finally {
+        await browser.close();
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Debug failed.';
+      res.status(500).json({ error: message });
+    }
+  });
 
   /**
    * Debug endpoint — use this to inspect the live DOM of any page so you can
