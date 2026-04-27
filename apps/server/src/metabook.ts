@@ -97,20 +97,36 @@ export async function scrapeMetabookSearch(query: string): Promise<MetabookSearc
     }
 
     // 2. Wait for the search input to appear
-    await page.waitForSelector('input.search-input', { timeout: 20_000 });
-
-    // 3. Focus and type the query — this triggers Typesense XHR requests
-    const searchInput = await page.$('input.search-input');
+    const selectors = [
+      'input.search-input',
+      'input[placeholder*="search" i]',
+      'input[id*="search" i]',
+      'input[type="search"]',
+      'input[class*="search" i]',
+    ];
+    let searchInput = null;
+    for (const selector of selectors) {
+      try {
+        await page.waitForSelector(selector, { timeout: 5_000 }).catch(() => {});
+        searchInput = await page.$(selector);
+        if (searchInput) break;
+      } catch {
+        // Try next selector
+      }
+    }
+    
     if (!searchInput) {
       throw new Error('Δεν βρέθηκε το πεδίο αναζήτησης στο metabook.gr.');
     }
+
+    // 3. Focus and type the query — this triggers Typesense XHR requests
     await page.evaluate((el: Element) => (el as HTMLInputElement).focus(), searchInput);
     await page.keyboard.type(searchTerm, { delay: 10 });
 
     // 4. Wait directly for the first successful Typesense response
     const typesenseResponse = await page.waitForResponse(
       (res) => res.url().includes('multi_search') && res.status() === 200,
-      { timeout: 6_000 },
+      { timeout: 8_000 },
     ).catch(() => null);
 
     if (!typesenseResponse) {
