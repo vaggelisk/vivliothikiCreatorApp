@@ -19,6 +19,8 @@ export function CategoryPageContent({
   bookTitle,
   bookAuthor,
   bookPublisher,
+  bookSubtitle,
+  bookSummary,
   isbn,
   book,
   sidebar,
@@ -86,6 +88,8 @@ export function CategoryPageContent({
                       isbnOfBook={isbn}
                       authorOfBook={bookAuthor}
                       publisherOfBook={bookPublisher}
+                      subtitleOfBook={bookSubtitle}
+                      summaryOfBook={bookSummary}
                       bookDetails={book}
                       onSave={save} />
                 </div>) :
@@ -96,13 +100,15 @@ export function CategoryPageContent({
                         {products
                           .map(({
                                id, name, review_count, isbn,
-                               publisher, author,
+                               subtitle, description, publisher, author,
                                rating_summary, price_range, thumbnail,
                                slug
                           }, index) => (
                             <ProductCard
                               key={id}
                               name={name || ''}
+                              subtitle={subtitle}
+                              description={description}
                               ratingCount={review_count}
                               publisher={publisher}
                               author={author}

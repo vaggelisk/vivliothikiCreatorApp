@@ -8,10 +8,12 @@ import axios from "axios";
 import type {Book} from "~/components/CreatorBookForm/types";
 import {useMemo, useState} from "react";
 import { getLibrarianApiBaseUrl } from '~/helpers/api';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 export function ProductCard({
   name,
+  subtitle,
   description,
   imageUrl,
   imageAlt,
@@ -28,12 +30,27 @@ export function ProductCard({
 }: ProductCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   let [book, setBook] = useState<Book | undefined>(undefined)
   const apiBaseUrl = useMemo(getLibrarianApiBaseUrl, []);
   const axiosInstance = useMemo(() => axios.create({
     baseURL: apiBaseUrl,
   }), [apiBaseUrl]);
+
+  const truncatedDescription = useMemo(() => {
+    const text = `${description ?? ''}`.trim();
+    if (!text) {
+      return '';
+    }
+
+    const words = text.split(/\s+/);
+    if (words.length <= 20) {
+      return text;
+    }
+
+    return `${words.slice(0, 20).join(' ')}...`;
+  }, [description]);
 
   const searchInternal = async (nameOfBook: string, publisherOfBook: string ) => {
     const dataPost3 =  {
@@ -79,11 +96,27 @@ export function ProductCard({
     }
   }
 
-  const goToFormFromMeta = async (nameOfBook? : string, isbnOfBook? : string, publisherOfBook? : string, authorOfBook? : string ) => {
+  const goToFormFromMeta = async (
+    nameOfBook? : string,
+    isbnOfBook? : string,
+    publisherOfBook? : string,
+    authorOfBook? : string,
+    descriptionOfBook?: string,
+    subtitleOfBook?: string,
+  ) => {
+    queryClient.setQueryData(['selected-meta-book'], {
+      name: nameOfBook ?? '',
+      isbn: isbnOfBook ?? '',
+      publisher: publisherOfBook ?? '',
+      author: authorOfBook ?? '',
+      description: descriptionOfBook ?? '',
+      subtitle: subtitleOfBook ?? '',
+    });
+
     // noinspection TypeScriptValidateTypes
     await router.push({
       pathname: '/search-on-editors',
-      query: { search: nameOfBook, isbn: isbnOfBook, publisher: publisherOfBook, author: authorOfBook, data: JSON.stringify({}) }
+      query: { search: nameOfBook, isbn: isbnOfBook, data: JSON.stringify({}) }
     })
   }
 
@@ -197,7 +230,7 @@ export function ProductCard({
           {name}
         </span>
 
-        <p className="block py-2 font-normal typography-text-xs text-neutral-700 text-justify">{description}</p>
+        <p className="block py-2 font-normal typography-text-xs text-neutral-700 text-justify">{truncatedDescription}</p>
         <span className="block pb-2 font-bold typography-text-sm" data-testid="product-card-vertical-price">
           συγγραφέας: {author}
         </span>
@@ -209,7 +242,14 @@ export function ProductCard({
         </span>
 
         {(router.route=='/search-on-meta') ?
-            <SfButton type="button" onClick={() => goToFormFromMeta(name!, isbn, publisher, author)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />} > Προσθήκη</SfButton> :
+            <SfButton
+              type="button"
+              onClick={() => goToFormFromMeta(name!, isbn, publisher, author, description ?? '', subtitle ?? '')}
+              size="sm"
+              slotPrefix={<SfIconShoppingCart size="sm" />}
+            >
+              Προσθήκη
+            </SfButton> :
             <SfButton type="button" onClick={() => submitSearchInternalOrBiblionet(name!, isbn, publisher)} size="sm" slotPrefix={<SfIconShoppingCart size="sm" />}>
               Προσθήκη
             </SfButton>

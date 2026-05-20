@@ -6,6 +6,8 @@ type SfProductCatalogItemNew = SfProductCatalogItem & {
   rating_summary: number,
   price_range: object,
   isbn: string,
+  subtitle?: string,
+  description?: string,
   publisher: string,
   author: string,
   thumbnail: {
@@ -22,6 +24,8 @@ export interface CategoryPageContentProps extends PropsWithChildren {
   bookTitle?: string;
   bookAuthor?: string;
   bookPublisher?: string;
+  bookSubtitle?: string;
+  bookSummary?: string;
   isbn?: string;
   book?: [];
   products: SfProductCatalogItemNew[];

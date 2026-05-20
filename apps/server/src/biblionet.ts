@@ -2,9 +2,11 @@
 
 export interface BiblionetResult {
   title: string;
+  subtitle: string | null;
   isbn: string | null;
   author: string | null;
   publisher: string | null;
+  description: string | null;
   photo: string | null;
   url: string | null;
 }
@@ -103,9 +105,22 @@ export async function scrapeBiblionetSearch(query: string): Promise<BiblionetSea
     const publisherMatch = block.match(/Εκδότης:\s*<a[^>]*>([^<]+)<\/a>/);
     const publisher = publisherMatch ? decodeHtmlEntities(publisherMatch[1].trim()) : null;
 
+    // Subtitle: appears in the payload as "[subtitle] => ..."
+    const subtitleMatch = block.match(/\[subtitle\]\s*=>\s*([\s\S]*?)(?=\[[a-z_]+\]\s*=>|<\/p>|$)/i);
+    const subtitleWithoutParallelTitle = (subtitleMatch?.[1] ?? '').split(/\[parallel_title\]\s*=>/i)[0] ?? subtitleMatch?.[1] ?? '';
+    const rawSubtitle = decodeHtmlEntities(stripTags(subtitleWithoutParallelTitle).trim());
+    const subtitle = rawSubtitle.length > 0 ? rawSubtitle : null;
+
     // ISBN: span containing "ISBN: 978..."
     const isbnMatch = block.match(/ISBN:\s*(97[89][\d\-]+)/);
     const isbn = isbnMatch ? isbnMatch[1].replace(/-/g, '') : null;
+
+    // Summary/description: appears in the rendered card as "[summary] => ..."
+    const summaryMatch = block.match(/\[summary\]\s*=>\s*([\s\S]*?)(?=<\/p>|<\[|\[\/|$)/i);
+    const rawSummary = summaryMatch ? summaryMatch[1] : '';
+    const summaryWithoutContents = rawSummary.split(/\[contents\]\s*=>/i)[0] ?? rawSummary;
+    const rawDescription = decodeHtmlEntities(stripTags(summaryWithoutContents).trim());
+    const description = rawDescription.length > 0 ? rawDescription : null;
 
     // Photo: img.sb_img src attribute
     const imgMatch = block.match(/class="[^"]*\bsb_img\b[^"]*"\s+src="([^"]+)"/);
@@ -116,7 +131,7 @@ export async function scrapeBiblionetSearch(query: string): Promise<BiblionetSea
       try { photo = new URL(rawSrc, BIBLIONET_ORIGIN).href; } catch { photo = rawSrc; }
     }
 
-    return { title: titleText, isbn, author, publisher, photo, url };
+    return { title: titleText, subtitle, isbn, author, publisher, description, photo, url };
   });
 
   const results = items.filter((r) => r.title.length > 0);

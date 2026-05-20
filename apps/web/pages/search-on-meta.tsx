@@ -20,6 +20,8 @@ type ProductKantro = {
   is_visible_in_front: Number;
   review_count: Number;
   name: string;
+  subtitle?: string;
+  description?: string;
   url_key: string;
   isbn: string;
   publisher: string;
@@ -72,6 +74,8 @@ export default function SearchOnMetaPage() {
         let responseProductKantro: ProductKantro[] = response.data.results.map((item: any) => {
           return {
             name: item.title,
+            subtitle: item.subtitle,
+            description: item.description,
             author: item.author,
             publisher: item.publisher,
             thumbnail: {

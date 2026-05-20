@@ -537,7 +537,7 @@ export function CreatorPageContent() {
                             </SfButton>
                             <h3 id="search-modal-title"
                                 className="absolute left-6 top-4 font-bold typography-headline-4 mb-4">
-                                <div>Είναι αυτός τα στοιχεία;</div>
+                                <div>Είναι αυτά τα στοιχεία;</div>
                             </h3>
                             <h3 id="search-modal-title"
                                 className="absolute left-6 top-10 font-bold typography-headline-4 mb-20">
