@@ -1,4 +1,5 @@
 /* eslint-disable max-statements, complexity, sonarjs/cognitive-complexity, unicorn/prevent-abbreviations, unicorn/prefer-set-has, no-secrets/no-secrets, prettier/prettier, unicorn/prefer-node-protocol, @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports */
+import dns from 'node:dns';
 import { createServer } from '@vue-storefront/middleware';
 import consola from 'consola';
 import config from '../middleware.config';
@@ -8,6 +9,26 @@ import cors from "cors";
 import { runScraper, type ScraperMode, type SourceKey } from './scanner';
 import { scrapeBiblionetSearch } from './biblionet';
 import { getPuppeteer } from './scanner';
+
+// This VPS has been seen with broken/unreachable IPv6 routing (EHOSTUNREACH) to
+// otherwise-healthy IPv4 hosts (e.g. Cloudflare-fronted sites). Node's fetch/DNS
+// would otherwise try the AAAA record first and hang/fail. Prefer IPv4 results.
+dns.setDefaultResultOrder('ipv4first');
+
+// Without these, an unexpected async error anywhere in the process (e.g. a scrape
+// call that throws outside its own try/catch) kills the event loop silently: no
+// crash log, no systemd restart (Restart=on-failure never fires because nothing
+// is reported as a failure), just a hung, unresponsive process until someone
+// manually restarts it. Log loudly and exit so systemd can actually recover it.
+process.on('uncaughtException', (error) => {
+  consola.error('[FATAL] uncaughtException', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  consola.error('[FATAL] unhandledRejection', reason);
+  process.exit(1);
+});
 
 const SCANNER_SOURCES = new Set<SourceKey>(['biblionet', 'politeia', 'amazon']);
 const SCANNER_LABEL: Record<SourceKey, string> = {

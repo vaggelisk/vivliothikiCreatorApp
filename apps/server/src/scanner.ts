@@ -327,6 +327,7 @@ async function searchPoliteianet(query: string): Promise<ScrapePayload | null> {
           'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
         Referer: 'https://www.politeianet.gr/',
       },
+      signal: AbortSignal.timeout(15_000),
     });
   } catch {
     throw new Error('Αποτυχία επικοινωνίας με την Πολιτεία.');
@@ -393,6 +394,7 @@ export async function scrapePoliteianetByUrl(url: string): Promise<ScrapePayload
           'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
         'Accept-Language': 'el-GR,el;q=0.9,en;q=0.8',
       },
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {
@@ -552,6 +554,7 @@ export async function scrapeAmazonByUrl(url: string): Promise<ScrapePayload | nu
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
       'Accept-Language': 'en-US,en;q=0.9,el;q=0.8',
     },
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {
@@ -594,6 +597,7 @@ async function scrapeAmazonByIsbn(isbn: string): Promise<ScrapePayload | null> {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
       'Accept-Language': 'en-US,en;q=0.9,el;q=0.8',
     },
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {

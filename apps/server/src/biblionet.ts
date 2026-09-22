@@ -70,6 +70,9 @@ export async function scrapeBiblionetSearch(query: string): Promise<BiblionetSea
       'Accept': 'text/html,application/xhtml+xml',
       'Accept-Language': 'el-GR,el;q=0.9,en;q=0.8',
     },
+    // Without a bound, a hung/unreachable connection (e.g. IPv6 routing issues) can
+    // block this request — and this whole single-process server — indefinitely.
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {
