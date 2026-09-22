@@ -90,8 +90,6 @@ export function useProducts(searchPhrase='') {
         });
   }
 
-  console.log('vag 2', vaggelis.data)
-
   // mockUpProducts.products = vaggelis?.data?.data?.products
   // mockUpProducts.pagination = vaggelis?.data?.data?.products?.page_info
   // mockUpProducts.pagination.totalResults = vaggelis?.data?.data?.products?.total_count
